@@ -6,15 +6,12 @@ import os
 
 import subprocess
 
-result  = ''
-
 failed_repo = 'failed.txt'
 output_results = 'chef_results.csv'
 
 
 
 def run_foodcritic(cookbook_path):
-    global result
     result = 0
     if not os.path.isdir(cookbook_path):
         print(f"Directory {cookbook_path} does not exist.")
@@ -37,12 +34,16 @@ def run_foodcritic(cookbook_path):
         if "Checking 0 files" in output:
             print(f"No files to check in the cookbook: {cookbook_path}")
             os.remove('foodcritic_output.txt')
+            result = 0
         else:
+            print(f"foodcritic_output removed")
             os.remove("foodcritic_output.txt")
             result =1
         
     except Exception as e:
         print(f"An error occurred while running Foodcritic: {e}")
+    
+    return result
     
 
 
@@ -74,7 +75,6 @@ def get_final_flag(repo_dir):
 
 
 def chef_main(repo_dir):
-    global result
     result = get_final_flag(repo_dir)
     return result
 

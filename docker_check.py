@@ -70,8 +70,8 @@ def check_docker_compose_files():
             try:
                 with open(file_path, 'r') as file:
                     yaml.safe_load(file)
-                print(f"{file_path} is a valid Docker Compose file.")
-                success_flags.append(1)
+                    print(f"{file_path} is a valid Docker Compose file.")
+                    success_flags.append(1)
             except yaml.YAMLError as exc:
                 print(f"{file_path} is not a valid Docker Compose file. Error: {exc}")
                 success_flags.append(0)
@@ -84,7 +84,6 @@ def check_docker_compose_files():
     return 1 if 1 in success_flags else 0
 
 def docker_main(repo_dir):
-    global result
     global success_flags
     global working_dockerfiles
     result = find_docker_compose(repo_dir)
