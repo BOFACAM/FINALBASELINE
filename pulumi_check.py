@@ -27,6 +27,7 @@ debug_path = 'debugging.txt'
 # Set your Pulumi access token here
 PULUMI_ACCESS_TOKEN = 'pul-a31d7c8d3f43b8cce5a6e3f4ee015879f7ae3fce'
 
+"""
 def clone_repo(): 
     global working_link
     repo_dir = working_link.replace('/', '_')
@@ -41,6 +42,8 @@ def clone_repo():
         return repo_dir
     except Exception as e:
         return None
+
+"""
 
 
 def check_pulumi_init(repo_path):
@@ -106,7 +109,7 @@ def check_pulumi_init(repo_path):
             return 0
 
 
-
+"""
 def delete_cloned_repo(repo_path):
     if os.path.exists(repo_path):
         try:
@@ -134,6 +137,8 @@ def delete_cloned_repo(repo_path):
 
 
 """
+
+"""
 def write_csv_header():
         with open(output_results, mode='w', newline='') as file:
             writer = csv.writer(file)
@@ -141,6 +146,7 @@ def write_csv_header():
 
 """
 
+"""
 def copy_pair(link, id):
     global working_id
     global working_link
@@ -148,12 +154,16 @@ def copy_pair(link, id):
     working_id = id
     print(working_link)
     print(working_id)
+"""
 
 
+"""
 def write_csv_file(id, link, result):
     with open(output_results, mode='a', newline='') as file:
         writer = csv.writer(file)
         writer.writerow([link, id, result])
+
+"""
 
 
 def find_pulumi_files(repo_path):

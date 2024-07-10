@@ -10,6 +10,7 @@ import yaml
 
 from salt_check import *
 from pulumi_check import *
+from docker_check import *
    
 
 
@@ -112,8 +113,18 @@ def is_meaningful_file(file_path):
     return False
 
 
+"""
+Param: row from json file
 
+Stores: fields from the row element
+Clones repo
+
+Returns: target dir, relevant files, iac tools used
+
+
+"""
 def process_single_row(row):
+
     repo_id = row["ID"]
     repo_url = row["URL"]
     raw_json_data = row["RAW_JSON_DATA"]
@@ -144,21 +155,37 @@ def process_single_row(row):
 
     return target_dir, relevant_files, row["IAC Tools"]
 
+
+"""
+Param: row
+
+Processes row, gets target dir, relevant files, found tools
+returns list of validated tools
+returns list of validated files
+
+
+"""
 def validate_repo(row):
     target_dir, relevant_files, tools_found = process_single_row(row)
     tool_parsers = []
     validated_files = []
-
+    """
     present,path = vagrant_validation(target_dir)
-    if present:
-        tool_parsers.append("VAG")
-        validated_files.append(path)
-    
+        if present:
+            tool_parsers.append("VAG")
+            validated_files.append(path)
+    """
+  
+    """
     tf_files = [f for f in relevant_files if f.endswith(('.tf', '.tf.json'))]
     aws_files = [f for f in relevant_files if f.endswith(('.yaml', '.yml', '.json'))]
     az_files = [f for f in relevant_files if f.endswith('.json')]
     pup_files = [f for f in relevant_files if f.endswith('.pp')]
+    """
+    
+
   
+    """
     if 'AWS' in tools_found:
         appear, files = AWS_validation(aws_files)
         if appear:
@@ -179,6 +206,7 @@ def validate_repo(row):
         if appear:
             tool_parsers.append("TF")
             validated_files.extend(files)
+    
     # end of my code
 
     if 'SS' in tools_found:
@@ -193,6 +221,17 @@ def validate_repo(row):
         if pulumi_result:
             tool_parsers.append("PUL")
             validated_files.extend(find_pulumi_files(target_dir))
+    
+    
+    """
+    
+    
+    if 'DOCC' in tools_found:
+        docker_result = docker_main(target_dir)
+        if docker_result==1:
+            tool_parsers.append('DOCC')
+
+
  
     shutil.rmtree(target_dir, onerror=onerror)
     return tool_parsers, validated_files
@@ -286,7 +325,7 @@ def PP_validation(file_paths):
 
 def main():
     csv = "first_screening.csv"
-    output_csv = "new_output.csv"
+    output_csv = "test_output.csv"
 
     df = read_csv(csv)
    
@@ -294,6 +333,7 @@ def main():
         row = df.iloc[i]
         repo_id = row["ID"]
         tool_parsers,validated_files= validate_repo(row)
+        print(tool_parsers)
         with open(output_csv,'a') as f:
             validated_files_join = ';'.join(validated_files)
             f.write(f'{repo_id},{";".join(tool_parsers)},{validated_files_join}\n')
