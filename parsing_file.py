@@ -11,6 +11,7 @@ import csv
 
 from salt_check import *
 from pulumi_check import *
+from docker_check import *
    
 
 
@@ -156,7 +157,9 @@ def validate_repo(row):
         "PUP": 0,
         "TF/OT": 0,
         "SS": 0,
-        "PUL": 0
+        "PUL": 0,
+        "DOCK":0,
+        "CHEF":0
     }
 
     present,path = vagrant_validation(target_dir)
@@ -206,7 +209,13 @@ def validate_repo(row):
         if pulumi_result:
             iac_dict["PUL"] = 1
             validated_files.extend(find_pulumi_files(target_dir))
- 
+    
+    if 'DOCC' in tools_found:
+        docker_result = docker_main(target_dir)
+        #docker_result will store a 0/1
+        iac_dict["DOCK"]= docker_result
+        #validated_files.extend(docker_files)
+
     shutil.rmtree(target_dir, onerror=onerror)
     return iac_dict, validated_files,repo_url
 
@@ -306,7 +315,7 @@ def main():
 
     with open(output_csv,'w') as file:
         writer = csv.writer(file)
-        writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL"])
+        writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL", "DOCK", "CHEF"])
 
     for i in tqdm(range(318,len(df))):
         row = df.iloc[i]
@@ -322,9 +331,11 @@ def main():
                         iac_dict["AWS"],
                         iac_dict["AZ"],
                         iac_dict["PUP"],
-                        iac_dict["TF"],
+                        iac_dict["TF/OT"],
                         iac_dict["SS"],
                         iac_dict["PUL"],
+                        iac_dict["DOCK"],
+                        iac_dict["CHEF"],
                         validated_files_join
                     ]
             writer.writerow(data_row)
