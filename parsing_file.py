@@ -222,6 +222,9 @@ def validate_repo(row):
         #docker_result will store a 0/1
         iac_dict["DOCK"]= docker_result
         #validated_files.extend(docker_files)
+    if 'CH' in tools_found:
+        chef_result = chef_main(target_dir)
+        iac_dict["CHEF"] = chef_result
     
     shutil.rmtree(target_dir, onerror=onerror)
     return iac_dict, validated_files,repo_url
