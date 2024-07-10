@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Function to create and activate a virtual environment and install Ansible Content Parser
+# Function to create and activate a virtual environment and install necessary packages
 setup_ansible_venv() {
     # Check if Python3 is installed
     if ! command -v python3 &> /dev/null; then
@@ -47,8 +47,12 @@ setup_ansible_venv() {
         exit 1
     fi
 
-    # Install Ansible Content Parser
+    # Install setuptools, Ansible Content Parser, and other necessary packages
+    pip install setuptools
     pip install git+https://github.com/ansible/ansible-content-parser.git
+    pip install pandas
+    pip install tqdm
+    pip install pydriller
 
     echo "Ansible virtual environment setup completed."
 }

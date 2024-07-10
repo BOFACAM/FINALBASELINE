@@ -237,6 +237,8 @@ def validate_repo(row):
         iac_dict["KUB"]=kubernetes
     if 'ANS' in tools_found:
         ansible = ansible_main(target_dir)
+        if ansible ==1:
+            iac_dict["ANS"]=ansible
 
     
 
@@ -343,7 +345,7 @@ def main():
         writer = csv.writer(file)
         writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL","BIC","DOCK", "CHEF","GOOG","KUB","ANS"])
 
-    for i in tqdm(range(22,len(df))):
+    for i in tqdm(range(19,len(df))):
         row = df.iloc[i]
         repo_id = row["ID"]
         repo_url = row['URL']

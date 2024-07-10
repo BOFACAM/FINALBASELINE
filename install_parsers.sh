@@ -276,7 +276,6 @@ detect_os_and_install() {
             install_puppet_parser_"$os_type"
             ;;
         all)
-            install_ansible_content_parser "$os_type"
             install_terraform_"$os_type"
             install_pulumi_"$os_type"
             install_aws_cfn_lint_"$os_type"

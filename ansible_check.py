@@ -12,7 +12,7 @@ def delete_dir():
 def run_ansible_parser(repo_dir):
     try:
         # Run the ansible-content-parser command
-        result = subprocess.run(['ansible-content-parser', repo_dir, 'venv/output_file'], capture_output=True, text=True)
+        result = subprocess.run(['/Users/Focus/Documents/GitHub/FINALBASELINE/venv/bin/ansible-content-parser', repo_dir, 'venv/output_file'], capture_output=True, text=True)
         if result.returncode == 0:
             print("Ansible Content Parser ran successfully")
             print(result.stdout)
