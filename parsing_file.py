@@ -1,6 +1,7 @@
 import pandas as pd
 from git import Repo
 import os
+from git import Repo, GitCommandError
 import subprocess
 import shutil
 import stat
@@ -64,14 +65,20 @@ def read_csv(csv):
 def get_home_directory(): #C:\Users\camyi 
     return os.path.expanduser("~")
 
-def clone_repo(url, target_dir): #clones directory to target directory 
+def clone_repo(url, target_dir):
     if not os.path.exists(target_dir):
         os.makedirs(target_dir)
     else:
-        return 
-    repo = Repo.clone_from(url, target_dir)
-    return repo
+        return None
 
+    try:
+        repo = Repo.clone_from(url, target_dir)
+        # Run git lfs install in the cloned repo
+        repo.git.lfs('install')
+        return repo
+    except GitCommandError as e:
+        print(f"Error cloning repo: {e}")
+        return None
 
 def onerror(func, path, exc_info):
     """
