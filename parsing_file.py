@@ -14,7 +14,7 @@ from pulumi_check import *
 from bicep_check import *
 from docker_check import *
 from chef_check import *
-   
+from kub_google_check import *
 
 
 #lets define the file extensions
@@ -162,7 +162,9 @@ def validate_repo(row):
         "PUL": 0,
         "BIC":0,
         "DOCK":0,
-        "CHEF":0
+        "CHEF":0,
+        "GOOG":0,
+        "KUB":0
     }
 
     present,path = vagrant_validation(target_dir)
@@ -227,6 +229,12 @@ def validate_repo(row):
     if 'CH' in tools_found:
         chef_result = chef_main(target_dir)
         iac_dict["CHEF"] = chef_result
+    if 'GOOG' or 'KUB' in tools_found:
+        kubernetes, google = kub_google_main(target_dir)
+        iac_dict["GOOG"]=google
+        iac_dict["KUB"]=kubernetes
+
+
     
     shutil.rmtree(target_dir, onerror=onerror)
     return iac_dict, validated_files,repo_url
@@ -327,9 +335,9 @@ def main():
 
     with open(output_csv,'w') as file:
         writer = csv.writer(file)
-        writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL","BIC","DOCK", "CHEF"])
+        writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL","BIC","DOCK", "CHEF","GOOG","KUB"])
 
-    for i in tqdm(range(62,len(df))):
+    for i in tqdm(range(22,len(df))):
         row = df.iloc[i]
         repo_id = row["ID"]
         repo_url = row['URL']
@@ -349,6 +357,8 @@ def main():
                         iac_dict["BIC"],
                         iac_dict["DOCK"],
                         iac_dict["CHEF"],
+                        iac_dict["GOOG"],
+                        iac_dict["KUB"],
                         validated_files_join
                     ]
             writer.writerow(data_row)
