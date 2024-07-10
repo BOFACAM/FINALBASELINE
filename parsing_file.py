@@ -7,9 +7,12 @@ import stat
 from tqdm import tqdm
 import json
 import yaml
+import csv
 
 from salt_check import *
 from pulumi_check import *
+from bicep_check import *
+from docker_check import *
    
 
 
@@ -55,8 +58,8 @@ UNIQUE_KEYS = {
 with open('iac_dataset.json') as f:
     json_data = json.load(f)
 
-def read_csv(csv):
-    df = pd.read_csv(csv)
+def read_csv(csv_file):
+    df = pd.read_csv(csv_file)
     df = df[df["IS IAC FOUND?"] == True]
     return df
 
@@ -142,16 +145,27 @@ def process_single_row(row):
                 else:
                     print(f"File does not exist: {file_path}")
 
-    return target_dir, relevant_files, row["IAC Tools"]
+    return target_dir, relevant_files, row["IAC Tools"],repo_url
 
 def validate_repo(row):
-    target_dir, relevant_files, tools_found = process_single_row(row)
-    tool_parsers = []
+    target_dir, relevant_files, tools_found,repo_url = process_single_row(row)
     validated_files = []
+
+    iac_dict = {
+        "VAG": 0,
+        "AWS": 0,
+        "AZ": 0,
+        "PUP": 0,
+        "TF": 0,
+        "SS": 0,
+        "PUL": 0,
+        "BIC":0,
+        "DOCK":0
+    }
 
     present,path = vagrant_validation(target_dir)
     if present:
-        tool_parsers.append("VAG")
+        iac_dict["VAG"] = 1
         validated_files.append(path)
     
     tf_files = [f for f in relevant_files if f.endswith(('.tf', '.tf.json'))]
@@ -162,40 +176,55 @@ def validate_repo(row):
     if 'AWS' in tools_found:
         appear, files = AWS_validation(aws_files)
         if appear:
-            tool_parsers.append("AWS")
+            iac_dict["AWS"] = 1
             validated_files.extend(files)
+
     if 'AZ' in tools_found:
         appear, files = AZ_validation(az_files)
         if appear:
-            tool_parsers.append("AZ")
+            iac_dict["AZ"] = 1
             validated_files.extend(files)
+
     if 'PUP' in tools_found:
         appear, files = PP_validation(pup_files)
         if appear:
-            tool_parsers.append("PUP")
+            iac_dict["PUP"] = 1
             validated_files.extend(files)
+
     if 'TF' in tools_found:
         appear, files = init_validate_terraform_files(tf_files)
         if appear:
-            tool_parsers.append("TF")
+            iac_dict["TF"] = 1
             validated_files.extend(files)
     # end of my code
 
     if 'SS' in tools_found:
         salt_result = salt_main(target_dir)
         if salt_result:
-            tool_parsers.append("SS")
+            iac_dict["SS"] = 1
             validated_files.extend(found_files)
             validated_files.extend(found_dirs)
 
     if 'PUL' in tools_found:
         pulumi_result = pulumi_main(target_dir)
         if pulumi_result:
-            tool_parsers.append("PUL")
+            iac_dict["PUL"] = 1
             validated_files.extend(find_pulumi_files(target_dir))
- 
+    
+    if 'BIC' in tools_found:
+        bicep_result,file_path = bicep_main(target_dir)
+        if bicep_result:
+            iac_dict['BIC'] = 1
+            validated_files.append(file_path)
+    
+    if 'DOCC' in tools_found:
+        docker_result = docker_main(target_dir)
+        #docker_result will store a 0/1
+        iac_dict["DOCK"]= docker_result
+        #validated_files.extend(docker_files)
+    
     shutil.rmtree(target_dir, onerror=onerror)
-    return tool_parsers, validated_files
+    return iac_dict, validated_files,repo_url
 
 #VAGRANT
 def vagrant_validation(target_dir):
@@ -285,17 +314,37 @@ def PP_validation(file_paths):
 
 
 def main():
-    csv = "first_screening.csv"
-    output_csv = "new_output.csv"
+    csv_file = "first_screening.csv"
+    output_csv = "test_output.csv"
 
-    df = read_csv(csv)
-   
-    for i in tqdm(range(133,len(df))):
+    df = read_csv(csv_file)
+
+
+    with open(output_csv,'w') as file:
+        writer = csv.writer(file)
+        writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL","BIC","DOCK"])
+
+    for i in tqdm(range(62,len(df))):
         row = df.iloc[i]
         repo_id = row["ID"]
-        tool_parsers,validated_files= validate_repo(row)
-        with open(output_csv,'a') as f:
+        repo_url = row['URL']
+        iac_dict,validated_files,repo_url= validate_repo(row)
+        with open(output_csv,'a',newline ='') as f:
             validated_files_join = ';'.join(validated_files)
-            f.write(f'{repo_id},{";".join(tool_parsers)},{validated_files_join}\n')
+            writer = csv.writer(f)
+            data_row = [repo_id,
+                        repo_url, 
+                        iac_dict["VAG"],
+                        iac_dict["AWS"],
+                        iac_dict["AZ"],
+                        iac_dict["PUP"],
+                        iac_dict["TF"],
+                        iac_dict["SS"],
+                        iac_dict["PUL"],
+                        iac_dict["BIC"],
+                        iac_dict["DOCK"],
+                        validated_files_join
+                    ]
+            writer.writerow(data_row)
     
 main() 
