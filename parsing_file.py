@@ -15,6 +15,7 @@ from bicep_check import *
 from docker_check import *
 from chef_check import *
 from kub_google_check import *
+from ansible_check import *
 
 
 #lets define the file extensions
@@ -164,7 +165,8 @@ def validate_repo(row):
         "DOCK":0,
         "CHEF":0,
         "GOOG":0,
-        "KUB":0
+        "KUB":0,
+        "ANS":0
     }
 
     present,path = vagrant_validation(target_dir)
@@ -233,6 +235,12 @@ def validate_repo(row):
         kubernetes, google = kub_google_main(target_dir)
         iac_dict["GOOG"]=google
         iac_dict["KUB"]=kubernetes
+    if 'ANS' in tools_found:
+        ansible = ansible_main(target_dir)
+        if ansible ==1:
+            iac_dict["ANS"]=ansible
+
+    
 
 
     
@@ -335,9 +343,9 @@ def main():
 
     with open(output_csv,'w') as file:
         writer = csv.writer(file)
-        writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL","BIC","DOCK", "CHEF","GOOG","KUB"])
+        writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL","BIC","DOCK", "CHEF","GOOG","KUB","ANS"])
 
-    for i in tqdm(range(22,len(df))):
+    for i in tqdm(range(19,len(df))):
         row = df.iloc[i]
         repo_id = row["ID"]
         repo_url = row['URL']
@@ -359,6 +367,7 @@ def main():
                         iac_dict["CHEF"],
                         iac_dict["GOOG"],
                         iac_dict["KUB"],
+                        iac_dict["ANS"],
                         validated_files_join
                     ]
             writer.writerow(data_row)
