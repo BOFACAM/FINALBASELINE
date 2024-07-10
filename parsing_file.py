@@ -13,6 +13,7 @@ from salt_check import *
 from pulumi_check import *
 from bicep_check import *
 from docker_check import *
+from chef_check import *
    
 
 
@@ -160,7 +161,8 @@ def validate_repo(row):
         "SS": 0,
         "PUL": 0,
         "BIC":0,
-        "DOCK":0
+        "DOCK":0,
+        "CHEF":0
     }
 
     present,path = vagrant_validation(target_dir)
@@ -325,7 +327,7 @@ def main():
 
     with open(output_csv,'w') as file:
         writer = csv.writer(file)
-        writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL","BIC","DOCK"])
+        writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL","BIC","DOCK", "CHEF"])
 
     for i in tqdm(range(62,len(df))):
         row = df.iloc[i]
@@ -346,6 +348,7 @@ def main():
                         iac_dict["PUL"],
                         iac_dict["BIC"],
                         iac_dict["DOCK"],
+                        iac_dict["CHEF"],
                         validated_files_join
                     ]
             writer.writerow(data_row)
