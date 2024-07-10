@@ -11,6 +11,7 @@ import csv
 
 from salt_check import *
 from pulumi_check import *
+from bicep_check import *
    
 
 
@@ -154,9 +155,10 @@ def validate_repo(row):
         "AWS": 0,
         "AZ": 0,
         "PUP": 0,
-        "TF/OT": 0,
+        "TF": 0,
         "SS": 0,
-        "PUL": 0
+        "PUL": 0,
+        "BIC":0
     }
 
     present,path = vagrant_validation(target_dir)
@@ -206,6 +208,13 @@ def validate_repo(row):
         if pulumi_result:
             iac_dict["PUL"] = 1
             validated_files.extend(find_pulumi_files(target_dir))
+    
+    if 'BIC' in tools_found:
+        bicep_result,file_path = bicep_main(target_dir)
+        if bicep_result:
+            iac_dict['BIC'] = 1
+            validated_files.append(file_path)
+
  
     shutil.rmtree(target_dir, onerror=onerror)
     return iac_dict, validated_files,repo_url
@@ -306,9 +315,9 @@ def main():
 
     with open(output_csv,'w') as file:
         writer = csv.writer(file)
-        writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL"])
+        writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL","BIC"])
 
-    for i in tqdm(range(318,len(df))):
+    for i in tqdm(range(35,len(df))):
         row = df.iloc[i]
         repo_id = row["ID"]
         repo_url = row['URL']
@@ -325,6 +334,7 @@ def main():
                         iac_dict["TF"],
                         iac_dict["SS"],
                         iac_dict["PUL"],
+                        iac_dict["BIC"],
                         validated_files_join
                     ]
             writer.writerow(data_row)
