@@ -26,7 +26,7 @@ saltstack_dirs = ['salt', 'pillar']
 found_files = []
 found_dirs = []
 
-
+#delete these -----------------------
 def clone_repo(): 
     global working_link
     repo_dir = working_link.replace('/', '_')
@@ -74,20 +74,6 @@ def delete_cloned_repo(repo_path):
     else:
         print(f"Repository at {repo_path} does not exist.")
 
-def run_salt_lint(directory):
-    try:
-        result = subprocess.run(['salt-lint', directory], capture_output=True, text=True)
-        if result.returncode == 0:
-            print("No SaltStack linting issues found.")
-            return 1
-        else:
-            print("SaltStack linting issues found:")
-            print(result.stdout)
-            return 1
-    except FileNotFoundError:
-        print("salt-lint is not installed. Please install it using 'pip install salt-lint'.")
-        sys.exit(1)
-
 def write_csv_header():
         with open(output_results, mode='w', newline='') as file:
             writer = csv.writer(file)
@@ -106,6 +92,35 @@ def copy_pair(link, id):
     print(working_link)
     print(working_id)
 
+#delete these _____________________________
+
+"""
+Runs salt-lint parser on a given directory to decide if it is using SaltStack
+
+@param directory (file) : full path to a subdirectory within the home directory storing the cloned repository
+
+@return (int) flag determining if the repository is using Saltstack
+"""
+def run_salt_lint(directory):
+    try:
+        result = subprocess.run(['salt-lint', directory], capture_output=True, text=True)
+        if result.returncode == 0:
+            print("No SaltStack linting issues found.")
+            return 1
+        else:
+            print("SaltStack linting issues found:")
+            print(result.stdout)
+            return 1
+    except FileNotFoundError:
+        print("salt-lint is not installed. Please install it using 'pip install salt-lint'.")
+        sys.exit(1)
+
+"""
+Traverses the given repository for files ending in the Saltstack extensions and appends those to found_files.
+Traverses the directories in the repository for directories that are specific to Saltstack,and appends their paths to found_dirs.
+
+@param repo_dir (file) : full path to a subdirectory within the home directory storing the cloned repository
+"""
 def populate_found_elements(repo_dir):
     global found_dirs
     global found_files
@@ -117,6 +132,13 @@ def populate_found_elements(repo_dir):
             if dir in saltstack_dirs:
                 found_dirs.append(os.path.join(root, dir))
 
+"""
+Gets the salt lint result. Populates validation lists with directory paths and saltstack files.
+
+@param repo_dir (file) : full path to a subdirectory within the home directory storing the cloned repository
+
+@returns flag (int) : flag denoting the successfulness of the salt-lint validation. 
+"""
 def salt_main(repo_dir):
     flag = run_salt_lint(repo_dir)
     populate_found_elements(repo_dir)

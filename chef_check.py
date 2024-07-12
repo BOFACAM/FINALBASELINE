@@ -12,7 +12,13 @@ failed_repo = 'failed.txt'
 output_results = 'chef_results.csv'
 
 
+"""
+Runs foodcritic chef parser on a given cookbook.
 
+@param cookbook_path (str) : the path of the cookbook inside the repository
+
+@returns (int) : success or failure flag for running foodcritic on a cookbook
+"""
 def run_foodcritic(cookbook_path):
     if not os.path.isdir(cookbook_path):
         print(f"Directory {cookbook_path} does not exist.")
@@ -47,17 +53,17 @@ def run_foodcritic(cookbook_path):
         print(f"An error occurred while running Foodcritic: {e}")
         return 0
 
-def scan_for_cookbooks(repo_dir):
-    """
-    Scans the given repository directory for a subdirectory named 'cookbooks'.
-    
-    Args:
-    repo_dir (str): The path to the repository directory.
-    
-    Returns:
+"""
+Scans the given repository directory for a subdirectory named 'cookbooks'.
+
+@param repo_dir (str): The path to the repository directory.
+
+@returns
     str: The path to the 'cookbooks' directory if found, otherwise the repo_dir.
     bool: True if 'cookbooks' directory is found, False otherwise.
-    """
+"""
+def scan_for_cookbooks(repo_dir):
+
     cookbooks_dir = os.path.join(repo_dir, 'cookbooks')
     if os.path.isdir(cookbooks_dir):
         print(f"'cookbooks' directory found in {repo_dir}.")
@@ -66,6 +72,13 @@ def scan_for_cookbooks(repo_dir):
         print(f"'cookbooks' directory NOT found in {repo_dir}.")
         return repo_dir, False
 
+"""
+Obtains the cookbook and runs foodcritic on it to obtain chef validation.
+
+@param repo_dir (str): The path to the repository directory.
+
+@returns (int) : flag representing success or failure in running foodcritic.
+"""
 def chef_main(repo_dir):
     cookbook_path, found = scan_for_cookbooks(repo_dir)
     if not found:
