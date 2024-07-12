@@ -1,3 +1,4 @@
+#windows dont work, linux(ARM,ANS,CHEF)
 import pandas as pd
 from git import Repo
 import os
@@ -165,8 +166,7 @@ def validate_repo(row):
         "DOCK":0,
         "CHEF":0,
         "GOOG":0,
-        "KUB":0,
-        "ANS":0
+        "KUB":0
     }
 
     present,path = vagrant_validation(target_dir)
@@ -197,48 +197,50 @@ def validate_repo(row):
             iac_dict["PUP"] = 1
             validated_files.extend(files)
 
-    if 'TF' in tools_found:
+    if 'TF' in tools_found: #good
         appear, files = init_validate_terraform_files(tf_files)
         if appear:
             iac_dict["TF"] = 1
             validated_files.extend(files)
     # end of my code
 
-    if 'SS' in tools_found:
+    if 'SS' in tools_found: #good
         salt_result = salt_main(target_dir)
         if salt_result:
             iac_dict["SS"] = 1
             validated_files.extend(found_files)
             validated_files.extend(found_dirs)
 
-    if 'PUL' in tools_found:
+    if 'PUL' in tools_found: #good
         pulumi_result = pulumi_main(target_dir)
         if pulumi_result:
             iac_dict["PUL"] = 1
             validated_files.extend(find_pulumi_files(target_dir))
     
-    if 'BIC' in tools_found:
+    if 'BIC' in tools_found:#good
         bicep_result,file_path = bicep_main(target_dir)
         if bicep_result:
             iac_dict['BIC'] = 1
             validated_files.append(file_path)
     
-    if 'DOCC' in tools_found:
+    if 'DOCC' in tools_found: #good
         docker_result = docker_main(target_dir)
         #docker_result will store a 0/1
         iac_dict["DOCK"]= docker_result
         #validated_files.extend(docker_files)
-    if 'CH' in tools_found:
+    if 'CH' in tools_found:#good
         chef_result = chef_main(target_dir)
         iac_dict["CHEF"] = chef_result
+        
     if 'GOOG' or 'KUB' in tools_found:
         kubernetes, google = kub_google_main(target_dir)
         iac_dict["GOOG"]=google
         iac_dict["KUB"]=kubernetes
-    if 'ANS' in tools_found:
+
+    """if 'ANS' in tools_found:
         ansible = ansible_main(target_dir)
         if ansible ==1:
-            iac_dict["ANS"]=ansible
+            iac_dict["ANS"]=ansible"""
 
     
 
@@ -304,6 +306,7 @@ def AZ_validation(file_paths):
             print(f"Validating Azure Resource Manager file: {file_path}")
             try:
                 result = subprocess.run(['TemplateAnalyzer.exe', 'analyze-template', file_path], capture_output=True, text=True)
+                print(result)
                 if result.returncode == 0 or result.returncode not in {10, 20, 21, 22}:
                     validated_files.append(file_path)
                     return True,validated_files
@@ -314,7 +317,7 @@ def AZ_validation(file_paths):
     return False,validated_files
 
 #PUPPET
-def PP_validation(file_paths):
+def PP_validation(file_paths):#good
     validated_files = []
     for file_path in file_paths:
         if is_meaningful_file(file_path):
@@ -322,8 +325,11 @@ def PP_validation(file_paths):
             try:
                 puppet_cmd = "puppet"
                 puppet_path = shutil.which(puppet_cmd)
+                print(puppet_path)
                 
                 result = subprocess.run([puppet_path,'parser', 'validate', file_path], capture_output=True, text = True)
+                print(result.stdout)
+                print(result.stderr)
                 if result.returncode == 0:
                     validated_files.append(file_path)
                     return True,validated_files
@@ -336,16 +342,16 @@ def PP_validation(file_paths):
 
 def main():
     csv_file = "first_screening.csv"
-    output_csv = "test_output.csv"
+    output_csv = "check_output.csv"
 
     df = read_csv(csv_file)
 
 
     with open(output_csv,'w') as file:
         writer = csv.writer(file)
-        writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL","BIC","DOCK", "CHEF","GOOG","KUB","ANS"])
+        writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL","BIC","DOCK", "CHEF","GOOG","KUB"])
 
-    for i in tqdm(range(19,len(df))):
+    for i in tqdm(range(22,len(df))):#22
         row = df.iloc[i]
         repo_id = row["ID"]
         repo_url = row['URL']
@@ -367,7 +373,7 @@ def main():
                         iac_dict["CHEF"],
                         iac_dict["GOOG"],
                         iac_dict["KUB"],
-                        iac_dict["ANS"],
+                        #iac_dict["ANS"],
                         validated_files_join
                     ]
             writer.writerow(data_row)
