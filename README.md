@@ -1,5 +1,12 @@
+For Windows:
+
+
+
+For Mac:
 1)chmod +x install_parsers.sh
+
 2)chmod +x uninstall_parsers.sh
+
 3)chmod +x setup_ansible_parser.sh
 4)./install_parsers.sh
 5)choose os, choose tool to download (ansible in this case)
