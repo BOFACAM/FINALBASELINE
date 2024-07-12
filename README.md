@@ -3,6 +3,7 @@ For Windows:
 
 
 For Mac:
+
 1)chmod +x install_parsers.sh
 
 2)chmod +x uninstall_parsers.sh
