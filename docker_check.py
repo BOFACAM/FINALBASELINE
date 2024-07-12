@@ -18,20 +18,16 @@ working_dockerfiles = []
 failed_repo = 'failed_docker.txt'
 output_results = 'docker_results.csv'
 success_flags = []
+"""
+Searches the given directory and its subdirectories for a file named 'docker-compose.yml'.
+    
+@param root_dir (str): The root directory of the repository to search.
 
-
-
+@param bool: True if 'docker-compose.yml' is found, False otherwise.
+"""
 def find_docker_compose(root_dir):
     global working_dockerfiles
-    """
-    Searches the given directory and its subdirectories for a file named 'docker-compose.yml'.
-    
-    Args:
-    root_dir (str): The root directory of the repository to search.
-    
-    Returns:
-    bool: True if 'docker-compose.yml' is found, False otherwise.
-    """
+  
     for subdir, _, files in os.walk(root_dir):
         print(subdir, _, files)
         for file in files:
@@ -46,6 +42,12 @@ def find_docker_compose(root_dir):
     else:
         return 0
 
+"""
+Checking the validity of each file in the working_dockerfiles list.
+
+@returns (int) : flag denoting if there were any valid docker files in the repository.
+
+"""
 def check_docker_compose_files():
     global working_dockerfiles
     global success_flags
@@ -70,6 +72,14 @@ def check_docker_compose_files():
     print("Validation results:", success_flags)
     return 1 if 1 in success_flags else 0
 
+
+"""
+Finds the result of the docker parsing mechanism 
+
+@param repo_dir (file) : full path to a subdirectory within the home directory storing the cloned repository
+
+@returns (int) : flag denoting if the repository likely uses docker
+"""
 def docker_main(repo_dir):
     global result
     global success_flags

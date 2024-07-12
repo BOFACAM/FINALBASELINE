@@ -27,6 +27,7 @@ debug_path = 'debugging.txt'
 # Set your Pulumi access token here
 PULUMI_ACCESS_TOKEN = 'pul-a31d7c8d3f43b8cce5a6e3f4ee015879f7ae3fce'
 
+#i am pretty sure these 5 methods can be deleted (begin--------------------------)
 def clone_repo(): 
     global working_link
     repo_dir = working_link.replace('/', '_')
@@ -42,7 +43,82 @@ def clone_repo():
     except Exception as e:
         return None
 
+def delete_cloned_repo(repo_path):
+    if os.path.exists(repo_path):
+        try:
+            # Empty the directory first
+            for root, dirs, files in os.walk(repo_path):
+                for file in files:
+                    try:
+                        file_path = os.path.join(root, file)
+                        os.remove(file_path)
+                    except FileNotFoundError as e:
+                        print(f"File not found: {e}")
+                for dir in dirs:
+                    try:
+                        dir_path = os.path.join(root, dir)
+                        shutil.rmtree(dir_path)
+                    except FileNotFoundError as e:
+                        print(f"Directory not found: {e}")
+            # Delete the now-empty directory
+            shutil.rmtree(repo_path)
+            print(f"Repository at {repo_path} has been deleted.")
+        except Exception as e:
+            print(f"An error occurred while deleting the repository at {repo_path}: {e}")
+    else:
+        print(f"Repository at {repo_path} does not exist.")
 
+def write_csv_file(id, link, result):
+    with open(output_results, mode='a', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([link, id, result])
+
+"""
+def write_csv_header():
+        with open(output_results, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(['link', 'id', 'Pulumi'])  # Write header
+
+"""
+def copy_pair(link, id):
+    global working_id
+    global working_link
+    working_link = link
+    working_id = id
+    print(working_link)
+    print(working_id)
+
+#(end -------------------------------------)
+
+"""
+Finds Pulumi specific file names in the given repository, and returns a list of the parent directories holding those files.
+
+@param repo_path (file) : full path to a subdirectory within the home directory storing the cloned repository
+
+@returns
+    pulumi_files (list) : list of directories with a pulumi specific file name inside
+
+"""
+
+def find_pulumi_files(repo_path):
+    pulumi_files = []
+    for root, dirs, files in os.walk(repo_path):
+        for dir in dirs:
+            dir_path = os.path.join(root, dir)
+            dir_files = os.listdir(dir_path)
+            if 'Pulumi.yaml' in dir_files or 'Pulumi.lock.yaml' in dir_files:
+                pulumi_files.append(dir_path)
+    print(f"Found Pulumi files in directories: {pulumi_files}")
+    return pulumi_files
+
+"""
+Runs pulumi parser on the repository
+
+@param repo_path (file) : full path to a subdirectory within the home directory storing the cloned repository
+
+@returns 
+    (int) : flag determining if the pulumi parser was successful or not
+"""
 def check_pulumi_init(repo_path):
     try:
         env = os.environ.copy()
@@ -108,70 +184,14 @@ def check_pulumi_init(repo_path):
             return 0
 
 
-
-def delete_cloned_repo(repo_path):
-    if os.path.exists(repo_path):
-        try:
-            # Empty the directory first
-            for root, dirs, files in os.walk(repo_path):
-                for file in files:
-                    try:
-                        file_path = os.path.join(root, file)
-                        os.remove(file_path)
-                    except FileNotFoundError as e:
-                        print(f"File not found: {e}")
-                for dir in dirs:
-                    try:
-                        dir_path = os.path.join(root, dir)
-                        shutil.rmtree(dir_path)
-                    except FileNotFoundError as e:
-                        print(f"Directory not found: {e}")
-            # Delete the now-empty directory
-            shutil.rmtree(repo_path)
-            print(f"Repository at {repo_path} has been deleted.")
-        except Exception as e:
-            print(f"An error occurred while deleting the repository at {repo_path}: {e}")
-    else:
-        print(f"Repository at {repo_path} does not exist.")
-
-
 """
-def write_csv_header():
-        with open(output_results, mode='w', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow(['link', 'id', 'Pulumi'])  # Write header
+First, gets the pulumi specific file directories. 
+Then, runs Pulumi parser on the directory to obtain the truth flag for pulumi validation of the repository. 
 
+@param repo_dir (file) : full path to a subdirectory within the home directory storing the cloned repository
+
+@returns flag (int) : truth value representing if the pulumi parser was successful or unsuccessful in parsing.
 """
-
-def copy_pair(link, id):
-    global working_id
-    global working_link
-    working_link = link
-    working_id = id
-    print(working_link)
-    print(working_id)
-
-
-def write_csv_file(id, link, result):
-    with open(output_results, mode='a', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow([link, id, result])
-
-
-def find_pulumi_files(repo_path):
-    pulumi_files = []
-    for root, dirs, files in os.walk(repo_path):
-        for dir in dirs:
-            dir_path = os.path.join(root, dir)
-            dir_files = os.listdir(dir_path)
-            if 'Pulumi.yaml' in dir_files or 'Pulumi.lock.yaml' in dir_files:
-                pulumi_files.append(dir_path)
-    print(f"Found Pulumi files in directories: {pulumi_files}")
-    return pulumi_files
-
-
-
-
 def pulumi_main(repo_dir):
     pulumi_dirs = find_pulumi_files(repo_dir)
     flag = 0 # changed this from original had to set flag before as flag is then used sometimes before it is initialzied 

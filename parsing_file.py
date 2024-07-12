@@ -19,7 +19,9 @@ from kub_google_check import *
 from ansible_check import *
 
 
-#lets define the file extensions
+"""
+Each IAC tool and their corresponding file types.
+"""
 IAC_TOOLS = {
     'TF': ['.tf', '.tf.json'],#Terraform
     'PUL': ['.yaml', '.yml',],#Pulumi
@@ -39,6 +41,9 @@ IAC_TOOLS = {
     'SaltStack':['.sls']
 }
 
+"""
+Each IAC tool and their corresponding unique key identifiers in their files.
+"""
 UNIQUE_KEYS = {
     'Terraform': ['resource', 'provider', 'variable', 'output', 'data','locals'],
     'Pulumi': ['name', 'runtime', 'description', 'config', 'main'],
@@ -58,17 +63,43 @@ UNIQUE_KEYS = {
     'Kubernetes': ['apiVersion', 'kind', 'metadata', 'spec',]
 }
 
+"""
+Open JSON file containing all repositories and their relevant information.
+"""
 with open('iac_dataset.json') as f:
     json_data = json.load(f)
 
+"""
+Given the CSV file of the first screening, returns the repositories that have tested positive for an IAC tool.
+
+@param csv_file (file) : CSV file with repositories and their correlating 'IS IAC FOUND?' fields
+
+@returns : Dataframe containing the repositories that have tested positive for an IAC tool. 
+"""
 def read_csv(csv_file):
     df = pd.read_csv(csv_file)
     df = df[df["IS IAC FOUND?"] == True]
     return df
 
+"""
+Returns the home directory.
+
+@returns : Home directory of the location of the current project.
+
+"""
 def get_home_directory(): #C:\Users\camyi 
     return os.path.expanduser("~")
 
+
+"""
+Clones a repository into a target directory.
+
+@param url (str)  : the url of the repository to be cloned.
+
+@param target_dir (file) : full path to a subdirectory within the home directory, directory to store the cloned repository.
+
+@returns : an instance of the Git repository, including its branches, commits, tags, configuration, and working directory. 
+"""
 def clone_repo(url, target_dir): #clones directory to target directory 
     if not os.path.exists(target_dir):
         os.makedirs(target_dir)
@@ -77,7 +108,16 @@ def clone_repo(url, target_dir): #clones directory to target directory
     repo = Repo.clone_from(url, target_dir)
     return repo
 
+"""
+Handles errors in the removal of a directory using 'shutil.rmtree'. 
+Will check if the error is an access error and if so, will modify permissions and run the function again, else, will re-raise an error.
 
+@param func (function) : Function that raised an exception.
+
+@param path (str) : path to the directory that shutil.rmtree is removing.
+
+@param exc_info (tuple) : exception information returned by `sys.exc_info()`.
+"""
 def onerror(func, path, exc_info):
     """
     Error handler for ``shutil.rmtree``.
@@ -96,10 +136,15 @@ def onerror(func, path, exc_info):
     else:
         raise
 
+"""
+Check if the file contains meaningful content (not empty, not just comments, or YAML separators).
+
+@param file_path (str) : path to the file to be checked
+
+@returns : a boolean flag denoting if the file is meaningful
+"""
 def is_meaningful_file(file_path):
-    """
-    Check if the file contains meaningful content (not empty, not just comments, or YAML separators).
-    """
+   
     if os.path.getsize(file_path) == 0:
         return False
     try:
@@ -117,8 +162,20 @@ def is_meaningful_file(file_path):
         print(f"Error reading file {file_path}: {e}")
     return False
 
+"""
+Retrieves the id, url, and raw json data from a row in the original CSV file. 
+After confirming the presence of the raw json data, stores files and extensions and clones the repository.
+Appends the files with an IAC relevant extension to a list. 
 
+@param row (pandas.Series) : a single row of the repository dataframe
 
+@returns 
+    target_dir (file) : full path to a subdirectory within the home directory, directory to store the cloned repository.
+    relevant_files (list) : list of file paths in the cloned repository that have the IAC relevant file extensions
+    tools_found (list) : the field of the row that stores the list of abbreviated IAC tools. 
+    repo_url (str) : the url for the Github repository 
+
+"""
 def process_single_row(row):
     repo_id = row["ID"]
     repo_url = row["URL"]
@@ -150,6 +207,18 @@ def process_single_row(row):
 
     return target_dir, relevant_files, row["IAC Tools"],repo_url
 
+"""
+After obtaining the extension-relevant files, proceeds to validate the repository with 12 IAC parsing mechanisms.
+If the IAC parser uses a list of files as a parameter, the method will populate validated_files with the files that validated the parser.
+
+@param row (pandas.Series) : row symbolizing one Github repository from the dataframe containing all the repositories.
+
+@return 
+    iac_dict (dictionary) : a dictionary holding all the true/false (1/0) flags for each parser for a single repository
+    validated_files (list) : a list of files that were validated when using a IAC parser that uses the relevant files for validation
+    repo_url (str) : the url for the Github repository
+
+"""
 def validate_repo(row):
     target_dir, relevant_files, tools_found,repo_url = process_single_row(row)
     validated_files = []
@@ -242,13 +311,18 @@ def validate_repo(row):
         if ansible ==1:
             iac_dict["ANS"]=ansible"""
 
-    
-
-
-    
     shutil.rmtree(target_dir, onerror=onerror)
     return iac_dict, validated_files,repo_url
 
+"""
+Checks the repository for any files names 'Vagrantfile' as validation for the Vagrant IAC tool
+
+@param target_dir (file) : full path to a subdirectory within the home directory
+
+@returns 
+    True : if has a file named 'Vagrantfile'
+    False : if does not have a file named 'Vagrantfile'
+"""
 #VAGRANT
 def vagrant_validation(target_dir):
     for root, dirs, files in os.walk(target_dir):
@@ -256,6 +330,16 @@ def vagrant_validation(target_dir):
             return True, os.path.join(root, "Vagrantfile")
     return False, None
 
+"""
+Runs a terraform validator (see README) on a file from the given list of file paths.
+
+@param file_paths (list) : list of extension relevant file paths from the given repository
+
+@returns 
+    validated_files : a list of files that tested positive whilst validating terraform
+    True : if there was a file encountered that tested positive for the terraform validation
+    False : if there was no file found that tested positive for the terraform validation
+"""
 #TERRAFORM
 def init_validate_terraform_files(file_paths):
     validated_files=[]
@@ -280,7 +364,17 @@ def init_validate_terraform_files(file_paths):
             except Exception as e:
                 print(e)
     return False,validated_files
-        
+
+"""
+Runs cfn-lint AWS parser (see README) on the list of files from a single repository
+
+@param file_paths (list) : list of extension relevant file paths from the given repository
+
+@returns 
+    validated_files : a list of files that tested positive whilst validating AWS
+    True : if there was a file encountered that tested positive for the AWS validation
+    False : if there was no file found that tested positive for the AWS validation
+"""       
 #AWS
 def AWS_validation(file_paths):
     validated_files = []
@@ -298,6 +392,16 @@ def AWS_validation(file_paths):
                 print(e)
     return False,validated_files
 
+"""
+Runs Azure TemplateAnalyzer (see README) on the list of files from a single repository
+
+@param file_paths (list) : list of extension relevant file paths from the given repository
+
+@returns 
+    validated_files : a list of files that tested positive whilst validating Azure
+    True : if there was a file encountered that tested positive for the Azure validation
+    False : if there was no file found that tested positive for the Azure validation
+"""       
 #AZURE
 def AZ_validation(file_paths):
     validated_files = []
@@ -316,6 +420,16 @@ def AZ_validation(file_paths):
                 print(e)
     return False,validated_files
 
+"""
+Runs Puppet parser (see README) on the list of files from a single repository
+
+@param file_paths (list) : list of extension relevant file paths from the given repository
+
+@returns 
+    validated_files : a list of files that tested positive whilst validating Puppet
+    True : if there was a file encountered that tested positive for the Puppet validation
+    False : if there was no file found that tested positive for the Puppet validation
+"""       
 #PUPPET
 def PP_validation(file_paths):#good
     validated_files = []
@@ -340,6 +454,11 @@ def PP_validation(file_paths):#good
     return False,validated_files
 
 
+"""
+Handles opening and writing to the output CSV.
+Each subsequent column after 'URL' is a 0/1 flag denoting each IAC's usage. 
+A column at the end stores the files validated by the parsers.
+"""
 def main():
     csv_file = "first_screening.csv"
     output_csv = "check_output.csv"
