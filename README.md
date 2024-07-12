@@ -122,15 +122,20 @@ v3.123.0
 You will need to obtain a Pulumi Access Token. 
 
 1 ) Visit https://app.pulumi.com/ and create an account or login.
+
 2 ) Navigate to your profile icon -> Personal access tokens
+
 3 ) Click 'Create Token', and give a brief description to create your free valid token for 30 days.
+
 4 ) Copy this new access token to your clipboard
+
 5 ) Navigate to pulumi_check.py and locate 
-    "
+
     # Set your Pulumi access token here 
     PULUMI_ACCESS_TOKEN = ' ' 
-    "
+    
     around line 27-28
+    
 6 ) You will now be able to run Pulumi 
     
 
