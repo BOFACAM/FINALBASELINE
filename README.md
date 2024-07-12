@@ -134,7 +134,7 @@ You will need to obtain a Pulumi Access Token.
     # Set your Pulumi access token here 
     PULUMI_ACCESS_TOKEN = ' ' 
     
-    around line 27-28
+around line 27-28
     
 6 ) You will now be able to run Pulumi 
     
