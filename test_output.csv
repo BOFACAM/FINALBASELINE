@@ -1,3 +1,0 @@
-Repo_id,URL,VAG,AWS,AZ,PUP,TF/OT,SS,PUL,BIC,DOCK,CHEF,GOOG,KUB,ANS
-mesosphere_marathon,https://github.com/mesosphere/marathon,1,0,0,0,0,0,0,0,1,0,0,0,1,/Users/Focus/mesosphere_marathon/tests/jepsen/Vagrantfile
-rucio_rucio,https://github.com/rucio/rucio,0,0,0,0,0,0,0,0,1,0,0,0,1,

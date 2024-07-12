@@ -19,19 +19,6 @@ failed_repo = 'failed_docker.txt'
 output_results = 'docker_results.csv'
 success_flags = []
 
-"""
-
-def write_csv_header():
-        with open(output_results, mode='w', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow(['id', 'link', 'Docker'])  # Write header
-
-def write_csv_file(id, link, result):
-    with open(output_results, mode='a', newline='') as file:
-        writer = csv.writer(file)
-        writer.writerow([id, link, result])
-"""
-
 
 
 def find_docker_compose(root_dir):
@@ -48,7 +35,7 @@ def find_docker_compose(root_dir):
     for subdir, _, files in os.walk(root_dir):
         print(subdir, _, files)
         for file in files:
-            if 'docker-compose.yml' in file:
+            if file in ['docker-compose.yml', 'docker-compose.yaml', 'compose.yaml']:
                 full_path = os.path.join(subdir, file)
                 print(file)
                 working_dockerfiles.append(full_path)
@@ -68,7 +55,7 @@ def check_docker_compose_files():
         print(file_path)
         if os.path.exists(file_path):
             try:
-                with open(file_path, 'r') as file:
+                with open(file_path, 'r',encoding="utf-8") as file:
                     yaml.safe_load(file)
                 print(f"{file_path} is a valid Docker Compose file.")
                 success_flags.append(1)

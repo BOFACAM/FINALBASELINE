@@ -49,8 +49,10 @@ def check_pulumi_init(repo_path):
         env['PULUMI_ACCESS_TOKEN'] = PULUMI_ACCESS_TOKEN
         
         # Attempt to initialize the stack
+        pulumi_cmd = shutil.which("pulumi")
+        print(pulumi_cmd)
         result = subprocess.run(
-            ['pulumi', 'stack', 'init', '--stack', 'test-stack'],
+            [pulumi_cmd, 'stack', 'init', '--stack', 'test-stack'],
             cwd=repo_path,
             env=env,
             stdout=subprocess.PIPE,
