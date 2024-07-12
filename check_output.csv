@@ -57,3 +57,6 @@ owncloud_phoenix,https://github.com/owncloud/phoenix,0,0,0,0,0,0,0,0,1,0,0,0,
 czcorpus_kontext,https://github.com/czcorpus/kontext,0,0,0,0,0,0,0,0,1,0,0,0,
 stoqs_stoqs,https://github.com/stoqs/stoqs,1,0,0,0,0,0,0,0,1,0,0,0,C:\Users\camyi\stoqs_stoqs\Vagrantfile
 amazeeio_lagoon,https://github.com/amazeeio/lagoon,0,0,0,0,0,0,0,0,1,0,0,0,
+DataDog_dd-trace-py,https://github.com/DataDog/dd-trace-py,0,0,0,0,0,0,0,0,1,0,0,0,
+fedspendingtransparency_data-act-broker-backend,https://github.com/fedspendingtransparency/data-act-broker-backend,0,0,0,0,0,0,0,0,1,0,0,0,
+matter-labs_zksync,https://github.com/matter-labs/zksync,0,0,0,0,0,0,0,0,1,0,0,0,
