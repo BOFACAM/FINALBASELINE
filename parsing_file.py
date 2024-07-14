@@ -1,4 +1,3 @@
-#windows dont work, linux(ARM,ANS,CHEF)
 import pandas as pd
 from git import Repo
 import os
