@@ -1,4 +1,5 @@
-# FINALBASELINE Repository(Not done yet)
+
+# FINALBASELINE Repository
 
 ## Overview
 
@@ -19,149 +20,148 @@ Ensure you have the following tools installed and configured on your system:
 For Windows:
 Before the code can be run, we must download the existing parsers on the web running on the files in the repo.
 
-TERRAFORM(TF):
-LINK- https://developer.hashicorp.com/terraform/install 
-Click the windows download - it will show either 386 or AMD64(you will have to click what is compatible with your system)
-You will then have to unzip the folder in whatever directory it was put to. This may be different for others but for me Downloads.
-Then go to your "Edit system environment variables", go to "Environment Variables" --> "System Variables" --> "Path" --> "Edit" --> "New" 
-Paste the exact path where you downloaded the parser. This allows your computer to use the executable in that folder. 
-Go to your terminal and do "Terraform --version" 
+### Terraform (TF)
+LINK- https://developer.hashicorp.com/terraform/install
 
-SHOULD SHOW: (may be different depending on version)
+- Click the windows download - it will show either 386 or AMD64 (you will have to click what is compatible with your system).
+- You will then have to unzip the folder in whatever directory it was put to. This may be different for others but for me, it was Downloads.
+- Then go to your "Edit system environment variables", go to "Environment Variables" --> "System Variables" --> "Path" --> "Edit" --> "New".
+- Paste the exact path where you downloaded the parser. This allows your computer to use the executable in that folder.
+- Go to your terminal and do "Terraform --version"
+
+**SHOULD SHOW**: (may be different depending on version)
+```
 Terraform --version
 Terraform v1.8.5
 on windows_386
+```
 
-
-AWS:
+### AWS
 LINK- https://github.com/aws-cloudformation/cfn-lint
-The documentation should tell you about what to do but for Windows assuming you have pip installed. 
-Command - pip install cfn-lint
 
+The documentation should tell you what to do but for Windows assuming you have pip installed:
+- Command - pip install cfn-lint
+
+Verify the installation:
+```
 cfn-lint --version
 cfn-lint 0.87.7
+```
 
 Make sure you are doing this through the directory that you are working in or doing it through your default directory/root directory.
 
-Azure(template-analyzer):
-LINK:https://github.com/Azure/template-analyzer
-Go to "Download the latest Template Analyzer release in the releases section."
-you will pick TemplateAnalyzer-win-arm64.zip or TemplateAnalyzer-win-x64.zip
-Again once downloaded make sure you keep track of the directory at you downloaded and add it to your path
-Then go to your "Edit system environment variables", go to "Environment Variables" --> "System Variables" --> "Path" --> "Edit" --> "New" 
-Paste the exact path where you downloaded the parser. This allows your computer to use the executable in that folder. 
-Then TemplateAnalyzer --version or TemplateAnalyzer.exe --version
+### Azure (template-analyzer)
+LINK: https://github.com/Azure/template-analyzer
 
-my output for this was: 
+- Go to "Download the latest Template Analyzer release in the releases section."
+- You will pick TemplateAnalyzer-win-arm64.zip or TemplateAnalyzer-win-x64.zip
+- Again once downloaded make sure you keep track of the directory at which you downloaded and add it to your path.
+- Then go to your "Edit system environment variables", go to "Environment Variables" --> "System Variables" --> "Path" --> "Edit" --> "New".
+- Paste the exact path where you downloaded the parser. This allows your computer to use the executable in that folder.
+- Then TemplateAnalyzer --version or TemplateAnalyzer.exe --version
+
+My output for this was:
+```
 0.7.0+582d9199d19acc60716af8f0874dc51cec6aa01b
+```
 
+### Chef
+LINK: https://rubyinstaller.org/downloads/
 
-CHEF:
-LINK:https://rubyinstaller.org/downloads/
-Make sure to say put to path it will be a small box regarding to add ruby to path 
-once installed the termainal will show up prompting you what to download
-When I did this, i just pressed enter as that downloads everything. you will be prompted twice when you do this. 
-Once you are done, go to your terminal and input
+- Make sure to say put to path it will be a small box regarding to add ruby to path.
+- Once installed the terminal will show up prompting you what to download.
+- When I did this, I just pressed enter as that downloads everything. You will be prompted twice when you do this.
+- Once you are done, go to your terminal and input:
 
+Verify the installation:
+```
 ruby --version
 ruby 3.3.4 (2024-07-09 revision be1089c8ec) [x64-mingw-ucrt]
+```
 
-May be different depending on the version
-Then we must download foodcritic 
+May be different depending on the version. Then we must download foodcritic:
 
-In the same terminal, we do 
+In the same terminal, we do:
+```
 gem install foodcritic
+```
 
+Verify the installation:
+```
 foodcritic --version
 foodcritic 16.3.0
+```
 
-again version may differ
+### Puppet
+LINK: https://www.puppet.com/docs/puppet/5.5/install_windows.html
 
-Puppet:
-LINK:https://www.puppet.com/docs/puppet/5.5/install_windows.html
-go straight to "Download the Windows puppet-agent package
-Puppet’s Windows packages can be found here. You need the most recent package for your OS’s"
+- Go straight to "Download the Windows puppet-agent package.
+- Puppet’s Windows packages can be found here. You need the most recent package for your OS’s"
+- You will then see a long list of puppet's downloads don't be frightened just search for "puppet-agent-x64-latest.msi"
+- You will then follow the download it and at the top right once it is finished click on it and a prompt should pop up giving you all the steps for download.
+- It will specify where the download is taking place, so keep track of where it being placed.
+- You can then add that file path to the system environment variables.
 
-you will then see a long list of" puppet's downloads dont be frightened just search for "puppet-agent-x64-latest.msi"
+Go to your "Edit system environment variables", go to "Environment Variables" --> "System Variables" --> "Path" --> "Edit" --> "New"
 
-you will then follow the download it and at the top right once it is finished click on it and a prompt should pop up giving you all the steps for download. 
-
-it will specifiy where the download is taking place, so keep track of where it being placed. 
-
-You can then add that file path to the system enivornment variables.
-
-go to your "Edit system environment variables", go to "Environment Variables" --> "System Variables" --> "Path" --> "Edit" --> "New"
-
-Paste done
-
-SALT:
+### Salt Lint
+Install using pip:
+```
 pip install salt-lint
+```
 
-Make sure you are on your root directory. This should be set as default but the command should be done in the user that you are working in
+Make sure you are on your root directory. This should be set as default but the command should be done in the user that you are working in.
 
+### Pulumi
+LINK: https://www.pulumi.com/docs/install/
 
+- Click Windows Binary Download.
+- Unzip file where the Download was placed.
+- Then copy the file path of that download (if you currently in file explorer you should be able to hit the top of the search bar and get exact path).
+- Then go to your "Edit system environment variables", go to "Environment Variables" --> "System Variables" --> "Path" --> "Edit" --> "New".
+- Paste the exact path where you downloaded the parser. This allows your computer to use the executable in that folder.
 
-This should be 
-
-Pulumi:
-Link:https://www.pulumi.com/docs/install/
-
-Click Windows Binary Download 
-
-Unzip file where the Download was placed
-
-Then copy the file path of that download (if you currently in file explorer you should be able to hit the top of the search bar and get exact path)
-
-Then go to your "Edit system environment variables", go to "Environment Variables" --> "System Variables" --> "Path" --> "Edit" --> "New" 
-Paste the exact path where you downloaded the parser. This allows your computer to use the executable in that folder. 
-
-Check if downloaded properly:
+Verify the installation:
+```
 pulumi version
 v3.123.0
+```
 
-You will need to obtain a Pulumi Access Token. 
+## Running the Script
 
-1 ) Visit https://app.pulumi.com/ and create an account or login.
+Once all the parsers are downloaded, you should be able to execute `parsing_file.py` which executes all the parsers for the repos. Again not all of them are using parsers from the web, but instead through our own implementation of finding those files specific to the IAC tool.
 
-2 ) Navigate to your profile icon -> Personal access tokens
-
-3 ) Click 'Create Token', and give a brief description to create your free valid token for 30 days.
-
-4 ) Copy this new access token to your clipboard
-
-5 ) Navigate to pulumi_check.py and locate 
-
-    # Set your Pulumi access token here 
-    PULUMI_ACCESS_TOKEN = ' ' 
-    
-around line 27-28
-    
-6 ) You will now be able to run Pulumi 
-    
-
-
-
-Once all the parsers are downloaded, you should be able to execute parsing_file.py which executes all the parsers for the repos. Again not all of them are using parsers from the web, but instead through our own implementation of finding those files specific to the IAC tool
-
-command line:
+Command line:
+```
 https://github.com/BOFACAM/FINALBASELINE.git
+```
 
+Clone the repository:
+```
 git clone https://github.com/BOFACAM/FINALBASELINE.git
+```
 
+Navigate to the repository directory:
+```
+cd FINALBASELINE
+```
+
+Run the script:
+```
 python parsing_file.py
+```
 
-you should be seeing validating print statements showing the code working. this process will take along time. There is range for the repos that you might wanna set yourself as well be free to change that.
+## IMPORTANT:
 
+There are some GitHub links that take a long time to clone and some repositories that aren't compatible with Windows due to its sensitivity to formatting (e.g., file names being too long or characters missing).
 
+### Known Issues:
+- **Cali-open** (Line 83)
+- **CovenantSQL_CovenantSQL** (Line 94)
+- **digirati-co-uk/madoc-platform** (Line 106)
+- **lblod_app-demo-editor** (Line 125)
+- **makeitfine-org_mif** (Line 229)
+- **RedHatInsights_insights-puptoo** (Line 240)
+- **TibebeJS_masterlance** (Line 293)
 
-
-
-
-
-
-
-
-
-
-
-
+You should be seeing validating print statements showing the code working. This process will take a long time. There is range for the repos that you might wanna set yourself as well be free to change that. you wont be able to run this the whole way through due to the issues above. This has not been fully tested on linux or mac.
