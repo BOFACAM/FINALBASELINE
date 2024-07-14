@@ -3,89 +3,85 @@ import shutil
 import git
 from git import Repo
 import os
-import pandas as pd
-import yaml
-import json
-
-import pydriller as pydrill
-from pydriller import Repository
 
 import subprocess
-from pathlib import Path
 
 result  = ''
-working_dockerfiles = []
-failed_repo = 'failed_docker.txt'
-output_results = 'docker_results.csv'
-success_flags = []
-"""
-Searches the given directory and its subdirectories for a file named 'docker-compose.yml'.
-    
-@param root_dir (str): The root directory of the repository to search.
 
-@param bool: True if 'docker-compose.yml' is found, False otherwise.
+failed_repo = 'failed.txt'
+output_results = 'chef_results.csv'
+
+
 """
-def find_docker_compose(root_dir):
-    global working_dockerfiles
-  
-    for subdir, _, files in os.walk(root_dir):
-        print(subdir, _, files)
-        for file in files:
-             if "docker-compose.yml" in file or "docker-compose.yaml" in file or "compose.yaml" in file or "compose.yml" in file:
-                full_path = os.path.join(subdir, file)
-                print(file)
-                working_dockerfiles.append(full_path)
-    print(working_dockerfiles)
-    if working_dockerfiles:
-        final_eval = check_docker_compose_files()
-        return final_eval
-    else:
+Runs foodcritic chef parser on a given cookbook.
+
+@param cookbook_path (str) : the path of the cookbook inside the repository
+
+@returns (int) : success or failure flag for running foodcritic on a cookbook
+"""
+def run_foodcritic(cookbook_path):
+    if not os.path.isdir(cookbook_path):
+        print(f"Directory {cookbook_path} does not exist.")
+        return 0
+    
+    try:
+        # Run the foodcritic command and write output to a text file
+        result = subprocess.run(['foodcritic', cookbook_path], capture_output=True, text=True)
+        
+        with open('foodcritic_output.txt', 'w') as f:
+            f.write(result.stdout)
+            f.write(result.stderr)
+
+        # Read the output from the text file
+        with open('foodcritic_output.txt', 'r') as f:
+            output = f.read()
+
+        # Print the output of the command
+        print("Foodcritic Output:")
+        print(output)
+
+        # Check the output for "Checking 0 files"
+        if "Checking 0 files" in output:
+            print(f"No files to check in the cookbook: {cookbook_path}")
+            os.remove('foodcritic_output.txt')
+            return 0
+        else:
+            os.remove("foodcritic_output.txt")
+            return 1
+        
+    except Exception as e:
+        print(f"An error occurred while running Foodcritic: {e}")
         return 0
 
 """
-Checking the validity of each file in the working_dockerfiles list.
+Scans the given repository directory for a subdirectory named 'cookbooks'.
 
-@returns (int) : flag denoting if there were any valid docker files in the repository.
+@param repo_dir (str): The path to the repository directory.
+
+@returns
+    str: The path to the 'cookbooks' directory if found, otherwise the repo_dir.
+    bool: True if 'cookbooks' directory is found, False otherwise.
+"""
+def scan_for_cookbooks(repo_dir):
+
+    cookbooks_dir = os.path.join(repo_dir, 'cookbooks')
+    if os.path.isdir(cookbooks_dir):
+        print(f"'cookbooks' directory found in {repo_dir}.")
+        return cookbooks_dir, True
+    else:
+        print(f"'cookbooks' directory NOT found in {repo_dir}.")
+        return repo_dir, False
 
 """
-def check_docker_compose_files():
-    global working_dockerfiles
-    global success_flags
-    success_flags = []
+Obtains the cookbook and runs foodcritic on it to obtain chef validation.
 
-    for file_path in working_dockerfiles:
-        print(file_path)
-        if os.path.exists(file_path):
-            try:
-                with open(file_path, 'r',encoding="utf-8") as file:
-                    yaml.safe_load(file)
-                print(f"{file_path} is a valid Docker Compose file.")
-                success_flags.append(1)
-            except yaml.YAMLError as exc:
-                print(f"{file_path} is not a valid Docker Compose file. Error: {exc}")
-                success_flags.append(0)
+@param repo_dir (str): The path to the repository directory.
 
-        else:
-            print(f"File not found: {file_path}")
-            success_flags.append(0)
-
-    print("Validation results:", success_flags)
-    return 1 if 1 in success_flags else 0
-
-
+@returns (int) : flag representing success or failure in running foodcritic.
 """
-Finds the result of the docker parsing mechanism 
+def chef_main(repo_dir):
+    cookbook_path, found = scan_for_cookbooks(repo_dir)
+    if not found:
+        return 0
 
-@param repo_dir (file) : full path to a subdirectory within the home directory storing the cloned repository
-
-@returns (int) : flag denoting if the repository likely uses docker
-"""
-def docker_main(repo_dir):
-    global result
-    global success_flags
-    global working_dockerfiles
-    result = find_docker_compose(repo_dir)
-    print(result)
-    success_flags = []
-    working_dockerfiles = []
-    return result 
+    return run_foodcritic(cookbook_path)
