@@ -1,8 +1,6 @@
 import os
-import re
 import subprocess
 import sys
-
 import csv
 import shutil
 import git
@@ -16,129 +14,73 @@ import pydriller as pydrill
 from pydriller import Repository
 import subprocess
 from pathlib import Path
-from tqdm import tqdm
 
+output_results= 'salt_results.csv'
+wworking_link = ''
 working_id = ''
-working_link = ''
-output_results = 'pulumi_results.csv'
-failed_path = 'failed_cloned_repos.txt'
-debug_path = 'debugging.txt'
+failed_path = 'failed_clones_ansible'
 
-# Set your Pulumi access token here
-PULUMI_ACCESS_TOKEN = 'pul-a31d7c8d3f43b8cce5a6e3f4ee015879f7ae3fce'
+ # Look for common SaltStack files and directories
+saltstack_files = ['top.sls', 'minion', 'minion.d']
+saltstack_dirs = ['salt', 'pillar']
+found_files = []
+found_dirs = []
 
-
-"""
-Finds Pulumi specific file names in the given repository, and returns a list of the parent directories holding those files.
-
-@param repo_path (file) : full path to a subdirectory within the home directory storing the cloned repository
-
-@returns
-    pulumi_files (list) : list of directories with a pulumi specific file name inside
 
 """
+Runs salt-lint parser on a given directory to decide if it is using SaltStack
 
-def find_pulumi_files(repo_path):
-    pulumi_files = []
-    for root, dirs, files in os.walk(repo_path):
-        for dir in dirs:
-            dir_path = os.path.join(root, dir)
-            dir_files = os.listdir(dir_path)
-            if 'Pulumi.yaml' in dir_files or 'Pulumi.lock.yaml' in dir_files:
-                pulumi_files.append(dir_path)
-    print(f"Found Pulumi files in directories: {pulumi_files}")
-    return pulumi_files
+@param directory (file) : full path to a subdirectory within the home directory storing the cloned repository
 
+@return (int) flag determining if the repository is using Saltstack
 """
-Runs pulumi parser on the repository
-
-@param repo_path (file) : full path to a subdirectory within the home directory storing the cloned repository
-
-@returns 
-    (int) : flag determining if the pulumi parser was successful or not
-"""
-def check_pulumi_init(repo_path):
+def run_salt_lint(directory):
     try:
-        env = os.environ.copy()
-        env['PULUMI_ACCESS_TOKEN'] = PULUMI_ACCESS_TOKEN
-        
-        # Attempt to initialize the stack
-        pulumi_cmd = shutil.which("pulumi")
-        print(pulumi_cmd)
-        result = subprocess.run(
-            [pulumi_cmd, 'stack', 'init', '--stack', 'test-stack'],
-            cwd=repo_path,
-            env=env,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            check=True
-        )
-        print(f"Pulumi init successful in {repo_path}")
-        return 1
-    
-    except subprocess.CalledProcessError as e:
-        error_message = e.stderr
-        if "already exists" in error_message:
-            print(f"Stack already exists, attempting to delete the existing stack: {error_message}")
-            # Attempt to select and delete the existing stack
-            try:
-                select_result = subprocess.run(
-                    ['pulumi', 'stack', 'select', '--stack', 'test-stack'],
-                    cwd=repo_path,
-                    env=env,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                    check=True
-                )
-                delete_result = subprocess.run(
-                    ['pulumi', 'stack', 'rm', '--stack', 'test-stack', '--yes'],
-                    cwd=repo_path,
-                    env=env,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                    check=True
-                )
-                print(f"Pulumi stack deleted successfully. Re-initializing the stack.")
-                # Re-attempt to initialize the stack
-                init_result = subprocess.run(
-                    ['pulumi', 'stack', 'init', '--stack', 'test-stack'],
-                    cwd=repo_path,
-                    env=env,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    text=True,
-                    check=True
-                )
-                print(f"Pulumi init successful in {repo_path}")
-                return 1
-            except subprocess.CalledProcessError as delete_error:
-                print(f"Failed to delete existing Pulumi stack in {repo_path}\n{delete_error.stderr}")
-                return 0
+        result = subprocess.run(['salt-lint', directory], capture_output=True, text=True)
+        if result.returncode == 0:
+            print("No SaltStack linting issues found.")
+            return 1
         else:
-            print(f"Pulumi init failed in {repo_path}\n{error_message}")
-            return 0
-
+            print("SaltStack linting issues found:")
+            print(result.stdout)
+            return 1
+    except FileNotFoundError:
+        print("salt-lint is not installed. Please install it using 'pip install salt-lint'.")
+        sys.exit(1)
 
 """
-First, gets the pulumi specific file directories. 
-Then, runs Pulumi parser on the directory to obtain the truth flag for pulumi validation of the repository. 
+Traverses the given repository for files ending in the Saltstack extensions and appends those to found_files.
+Traverses the directories in the repository for directories that are specific to Saltstack,and appends their paths to found_dirs.
+
+@param repo_dir (file) : full path to a subdirectory within the home directory storing the cloned repository
+"""
+def populate_found_elements(repo_dir):
+    global found_dirs
+    global found_files
+    for root, dirs, files in os.walk(repo_dir):
+        for file in files:
+            if file in saltstack_files or file.endswith('.sls'):
+                found_files.append(os.path.join(root, file))
+        for dir in dirs:
+            if dir in saltstack_dirs:
+                found_dirs.append(os.path.join(root, dir))
+
+"""
+Gets the salt lint result. Populates validation lists with directory paths and saltstack files.
 
 @param repo_dir (file) : full path to a subdirectory within the home directory storing the cloned repository
 
-@returns flag (int) : truth value representing if the pulumi parser was successful or unsuccessful in parsing.
+@returns flag (int) : flag denoting the successfulness of the salt-lint validation. 
 """
-def pulumi_main(repo_dir):
-    pulumi_dirs = find_pulumi_files(repo_dir)
-    flag = 0 # changed this from original had to set flag before as flag is then used sometimes before it is initialzied 
-    if pulumi_dirs:
-        for dir in pulumi_dirs:
-            if check_pulumi_init(dir) == 1:
-                print("Pulumi stack initialized successfully.")
-                flag = 1
+def salt_main(repo_dir):
+    flag = run_salt_lint(repo_dir)
+    populate_found_elements(repo_dir)
+
+    if found_files or found_dirs:
+        print("Found SaltStack files or directories:")
+        flag = run_salt_lint(repo_dir)
     else:
-        print("No Pulumi configuration files found.")
+        print("No SaltStack files or directories found.")
+        flag = 0
+    
     return flag
-        
