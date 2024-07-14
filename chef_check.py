@@ -85,6 +85,3 @@ def chef_main(repo_dir):
         return 0
 
     return run_foodcritic(cookbook_path)
-
-
-
