@@ -131,18 +131,13 @@ You will need a Pulumi Access Token.
 
 4) Give a description and create your token, which will be valid for 30 days.
 
-5) You will see the message :
-'
-This is your new access token. Be sure to copy it, because you won't be able to see it again!
-'
-Followed by the access token, copy it.
+5) You will see the message : 'This is your new access token. Be sure to copy it, because you won't be able to see it again!' followed by the access token, copy it.
 
 6) Navigate to pulumi_check.py and locate :
-'
+"
 Set your Pulumi access token here
 PULUMI_ACCESS_TOKEN = ''
-
-'
+"
 around lines 27-28.
 
 
