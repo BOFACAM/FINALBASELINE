@@ -121,6 +121,35 @@ LINK: https://www.pulumi.com/docs/install/
 - Then go to your "Edit system environment variables", go to "Environment Variables" --> "System Variables" --> "Path" --> "Edit" --> "New".
 - Paste the exact path where you downloaded the parser. This allows your computer to use the executable in that folder.
 
+You will need a Pulumi Access Token. 
+
+1) Visit https://app.pulumi.com/ and make an account or log in.
+
+2) Click your profile icon and select 'Personal Access Tokens'
+
+3) Click 'Create New Token'.
+
+4) Give a description and create your token, which will be valid for 30 days.
+
+5) You will see the message :
+'
+This is your new access token. Be sure to copy it, because you won't be able to see it again!
+'
+Followed by the access token, copy it.
+
+6) Navigate to pulumi_check.py and locate :
+'
+# Set your Pulumi access token here
+PULUMI_ACCESS_TOKEN = ''
+
+'
+around lines 27-28.
+
+
+7) Paste your token here.
+
+8) Pulumi will work now.
+
 Verify the installation:
 ```
 pulumi version
