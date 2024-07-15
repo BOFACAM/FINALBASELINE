@@ -176,7 +176,7 @@ python parsing_file.py
 
 ## IMPORTANT:
 
-There are some GitHub links that take a long time to clone and some repositories that aren't compatible with Windows due to its sensitivity to formatting (e.g., file names being too long or characters missing).
+There are some GitHub links that aren't compatible with Windows due to its sensitivity to formatting (e.g., file names being too long or characters missing).
 
 ### Known Issues:
 - **Cali-open** (Line 83)
