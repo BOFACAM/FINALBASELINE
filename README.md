@@ -135,7 +135,6 @@ You will need a Pulumi Access Token.
 
 6) Navigate to pulumi_check.py and locate :
 "
-Set your Pulumi access token here
 PULUMI_ACCESS_TOKEN = ''
 "
 around lines 27-28.
