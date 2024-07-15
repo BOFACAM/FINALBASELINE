@@ -139,7 +139,7 @@ Followed by the access token, copy it.
 
 6) Navigate to pulumi_check.py and locate :
 '
-# Set your Pulumi access token here
+Set your Pulumi access token here
 PULUMI_ACCESS_TOKEN = ''
 
 '
