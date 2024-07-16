@@ -169,6 +169,11 @@ Navigate to the repository directory:
 cd FINALBASELINE
 ```
 
+Install the required dependencies:
+```
+pip install -r requirements.txt
+```
+
 Run the script:
 ```
 python parsing_file.py

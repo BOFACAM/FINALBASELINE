@@ -8,3 +8,7 @@ __pycache__/
 
 check_output.csv
 test_output.csv
+
+# Files added by mrm
+.idea
+myenv
