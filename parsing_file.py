@@ -15,7 +15,7 @@ from bicep_check import *
 from docker_check import *
 from chef_check import *
 from kub_google_check import *
-#from ansible_check import *
+from ansible_check import *
 
 
 """
@@ -28,7 +28,7 @@ IAC_TOOLS = {
     'AWS': ['.yaml', '.yml', '.json'],#AWS CloudFormation
     'AZ': ['.json'],#Azure Resource Manager
     'GOOG': ['.yaml'],#Google Cloud Deployment Manager
-    'ANS': ['.yaml', '.yml','.cfg'],#Ansible
+    'ANS': ['.yaml', '.yml','.cfg'], #Ansible
     'CH': ['.rb'],#Chef
     'PUP': ['.conf', '.pp'], #Puppet
     'SS': ['.sls'],#SaltStack
@@ -204,7 +204,7 @@ def process_single_row(row):
                 else:
                     print(f"File does not exist: {file_path}")
 
-    return target_dir, relevant_files, row["IAC Tools"],repo_url
+    return target_dir, relevant_files, row["IAC Tools"], repo_url, repo_id
 
 """
 After obtaining the extension-relevant files, proceeds to validate the repository with 12 IAC parsing mechanisms.
@@ -219,7 +219,7 @@ If the IAC parser uses a list of files as a parameter, the method will populate 
 
 """
 def validate_repo(row):
-    target_dir, relevant_files, tools_found,repo_url = process_single_row(row)
+    target_dir, relevant_files, tools_found,repo_url, repo_id = process_single_row(row)
     validated_files = []
 
     iac_dict = {
@@ -230,11 +230,12 @@ def validate_repo(row):
         "TF": 0,
         "SS": 0,
         "PUL": 0,
-        "BIC":0,
-        "DOCK":0,
-        "CHEF":0,
-        "GOOG":0,
-        "KUB":0
+        "BIC": 0,
+        "DOCK": 0,
+        "CHEF": 0,
+        "GOOG": 0,
+        "KUB": 0,
+        "ANS": 0
     }
 
     present,path = vagrant_validation(target_dir)
@@ -306,12 +307,12 @@ def validate_repo(row):
         iac_dict["KUB"]=kubernetes
 
     if 'ANS' in tools_found:
-        ansible = ansible_main(target_dir)
-        if ansible ==1:
-            iac_dict["ANS"]=ansible
+        ansible = ansible_main(target_dir, repo_id)
+        if ansible == 1:
+            iac_dict["ANS"] = ansible
 
     shutil.rmtree(target_dir, onerror=onerror)
-    return iac_dict, validated_files,repo_url
+    return iac_dict, validated_files, repo_url
 
 """
 Checks the repository for any files names 'Vagrantfile' as validation for the Vagrant IAC tool
@@ -454,6 +455,29 @@ def PP_validation(file_paths):#good
     return False,validated_files
 
 
+def structure_final_file(unformatted_file):
+    """
+    It adds a final output file with all the identified IaC tools per project
+    """
+
+    # Get the df
+    df = pd.read_csv(unformatted_file)
+
+    # Generate column for IaC tools
+    df["IaC_tools"] = ''
+
+    # Fill the new column with the IaC tools
+    for ind in df.index:
+        iac_tools = []
+    for col_ind in range(2, 16): # Index numbers of the parser names in the pandas columns
+        if df.iloc[ind, col_ind] == 1:
+            colname = df.columns[col_ind]
+            iac_tools.append(colname)
+    df.iloc[ind, len(df.columns)-1] = ", ".join(iac_tools)
+
+    df.to_csv(unformatted_file, index=False)
+
+
 """
 Handles opening and writing to the output CSV.
 Each subsequent column after 'URL' is a 0/1 flag denoting each IAC's usage. 
@@ -468,7 +492,7 @@ def main():
 
     with open(output_csv,'w') as file:
         writer = csv.writer(file)
-        writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL","BIC","DOCK", "CHEF","GOOG","KUB"])
+        writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL", "BIC", "DOCK", "CHEF", "GOOG", "KUB", "ANS", "Validated files"])
 
     for i in tqdm(range(0, 22)):  # 22 (for i in tqdm(range(0,len(df))):)
         row = df.iloc[i]
@@ -492,9 +516,11 @@ def main():
                         iac_dict["CHEF"],
                         iac_dict["GOOG"],
                         iac_dict["KUB"],
-                        #iac_dict["ANS"],
+                        iac_dict["ANS"],
                         validated_files_join
                     ]
             writer.writerow(data_row)
+
+    structure_final_file(output_csv)
     
 main() 

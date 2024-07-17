@@ -1,4 +1,4 @@
-Repo_id,URL,VAG,AWS,AZ,PUP,TF/OT,SS,PUL,BIC,DOCK,CHEF,GOOG,KUB
+Repo_id,URL,VAG,AWS,AZ,PUP,TF/OT,SS,PUL,BIC,DOCK,CHEF,GOOG,KUB,validated_files
 claranet_spryker-demoshop,https://github.com/claranet/spryker-demoshop,0,0,0,0,0,0,0,0,1,0,0,0,
 nocproject_noc,https://github.com/nocproject/noc,0,0,0,0,0,0,0,0,1,0,0,0,
 MaharaProject_mahara,https://github.com/MaharaProject/mahara,0,0,0,0,0,0,0,0,1,0,0,0,

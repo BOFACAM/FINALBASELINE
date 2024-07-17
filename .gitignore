@@ -1,7 +1,6 @@
 setup_ansible_parser.sh
 uninstall_parsers.sh
 install_parsers.sh
-ansible_check.py
 otherREADME.md
 
 __pycache__/
@@ -13,3 +12,4 @@ test_output.csv
 .idea
 myenv
 TemplateAnalyzer-osx-arm64
+draft.ipynb
