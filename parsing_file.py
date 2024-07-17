@@ -469,7 +469,7 @@ def structure_final_file(unformatted_file):
     # Fill the new column with the IaC tools
     for ind in df.index:
         iac_tools = []
-    for col_ind in range(2, 16): # Index numbers of the parser names in the pandas columns
+    for col_ind in range(2, 16):  # Index numbers of the parser names in the pandas columns
         if df.iloc[ind, col_ind] == 1:
             colname = df.columns[col_ind]
             iac_tools.append(colname)

@@ -14,3 +14,5 @@ myenv
 TemplateAnalyzer-osx-arm64
 draft.ipynb
 ansible-outputs
+FINAL_CSV.csv
+new_output.csv
