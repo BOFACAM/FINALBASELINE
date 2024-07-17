@@ -305,10 +305,10 @@ def validate_repo(row):
         iac_dict["GOOG"]=google
         iac_dict["KUB"]=kubernetes
 
-    """if 'ANS' in tools_found:
+    if 'ANS' in tools_found:
         ansible = ansible_main(target_dir)
         if ansible ==1:
-            iac_dict["ANS"]=ansible"""
+            iac_dict["ANS"]=ansible
 
     shutil.rmtree(target_dir, onerror=onerror)
     return iac_dict, validated_files,repo_url
@@ -357,12 +357,12 @@ def init_validate_terraform_files(file_paths):
                 shutil.rmtree(temp_dir, onerror=onerror)
                 if validate_result.returncode == 0:
                     validated_files.append(file_path)
-                    return True,validated_files
+                    return True, validated_files
             except FileNotFoundError or FileNotFoundError:
                 print(f"file not found or not there")
             except Exception as e:
                 print(e)
-    return False,validated_files
+    return False, validated_files
 
 """
 Runs cfn-lint AWS parser (see README) on the list of files from a single repository
@@ -400,7 +400,8 @@ Runs Azure TemplateAnalyzer (see README) on the list of files from a single repo
     validated_files : a list of files that tested positive whilst validating Azure
     True : if there was a file encountered that tested positive for the Azure validation
     False : if there was no file found that tested positive for the Azure validation
-"""       
+"""
+
 #AZURE
 def AZ_validation(file_paths):
     validated_files = []
@@ -412,7 +413,7 @@ def AZ_validation(file_paths):
                 print(result)
                 if result.returncode == 0 or result.returncode not in {10, 20, 21, 22}:
                     validated_files.append(file_path)
-                    return True,validated_files
+                    return True, validated_files
             except FileNotFoundError or FileNotFoundError:
                 print(f"file not found or not there")
             except Exception as e:
@@ -440,7 +441,7 @@ def PP_validation(file_paths):#good
                 puppet_path = shutil.which(puppet_cmd)
                 print(puppet_path)
                 
-                result = subprocess.run([puppet_path,'parser', 'validate', file_path], capture_output=True, text = True)
+                result = subprocess.run([puppet_path, 'parser', 'validate', file_path], capture_output=True, text=True)
                 print(result.stdout)
                 print(result.stderr)
                 if result.returncode == 0:
@@ -469,12 +470,12 @@ def main():
         writer = csv.writer(file)
         writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL","BIC","DOCK", "CHEF","GOOG","KUB"])
 
-    for i in tqdm(range(22,len(df))):#22
+    for i in tqdm(range(0, 22)):  # 22 (for i in tqdm(range(0,len(df))):)
         row = df.iloc[i]
         repo_id = row["ID"]
-        repo_url = row['URL']
-        iac_dict,validated_files,repo_url= validate_repo(row)
-        with open(output_csv,'a',newline ='') as f:
+        # repo_url = row['URL']
+        iac_dict,validated_files, repo_url = validate_repo(row)
+        with open(output_csv, 'a', newline='') as f:
             validated_files_join = ';'.join(validated_files)
             writer = csv.writer(f)
             data_row = [repo_id,

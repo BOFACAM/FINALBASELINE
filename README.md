@@ -23,6 +23,7 @@ Before the code can be run, we must download the existing parsers on the web run
 ### Terraform (TF)
 LINK- https://developer.hashicorp.com/terraform/install
 
+**WINDOWS INSTALL**
 - Click the windows download - it will show either 386 or AMD64 (you will have to click what is compatible with your system).
 - You will then have to unzip the folder in whatever directory it was put to. This may be different for others but for me, it was Downloads.
 - Then go to your "Edit system environment variables", go to "Environment Variables" --> "System Variables" --> "Path" --> "Edit" --> "New".
@@ -35,6 +36,9 @@ Terraform --version
 Terraform v1.8.5
 on windows_386
 ```
+
+**MAC/LINUX INSTALL**
+Interface as well as CLI installation ways offered, more info in the provided link.
 
 ### AWS
 LINK- https://github.com/aws-cloudformation/cfn-lint
@@ -169,7 +173,12 @@ Navigate to the repository directory:
 cd FINALBASELINE
 ```
 
-Install the required dependencies:
+Create Python virtual environment (More information in [here](https://docs.python.org/3/library/venv.html#how-venvs-work)):
+```
+python3 -m venv venv
+```
+
+After activating the virtual environment, install the required dependencies:
 ```
 pip install -r requirements.txt
 ```
