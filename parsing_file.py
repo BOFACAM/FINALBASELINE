@@ -254,11 +254,6 @@ def validate_repo(row):
             iac_dict["AWS"] = 1
             validated_files.extend(files)
 
-    if 'AZ' in tools_found:
-        appear, files = AZ_validation(az_files)
-        if appear:
-            iac_dict["AZ"] = 1
-            validated_files.extend(files)
 
     if 'PUP' in tools_found:
         appear, files = PP_validation(pup_files)
@@ -310,6 +305,19 @@ def validate_repo(row):
         ansible = ansible_main(target_dir, repo_id)
         if ansible == 1:
             iac_dict["ANS"] = ansible
+    
+    print(tools_found)
+    if 'AZ' in tools_found:
+        #appear, files = AZ_validation(az_files)
+        appear, files = AZ_validation_mac(az_files)
+        """
+        If you are using Mac OS, use this line instead of 'appear, files = AZ_validation(az_files)' : 
+
+        appear, files = AZ_validation_mac(az_files)
+        """
+        if appear:
+            iac_dict["AZ"] = 1
+            validated_files.extend(files)
 
     shutil.rmtree(target_dir, onerror=onerror)
     return iac_dict, validated_files, repo_url
@@ -420,6 +428,61 @@ def AZ_validation(file_paths):
             except Exception as e:
                 print(e)
     return False,validated_files
+"""
+Runs Azure TemplateAnalyzer for Mac OS (see README) on the list of files from a single repository
+
+@param file_paths (list) : list of extension relevant file paths from the given repository
+
+@returns 
+    validated_files : a list of files that tested positive whilst validating Azure
+    True : if there was a file encountered that tested positive for the Azure validation
+    False : if there was no file found that tested positive for the Azure validation
+"""
+
+def AZ_validation_mac(file_paths):
+    validated_files = []
+    analyzer_cli_path = find_analyzer_cli_path()
+    print(analyzer_cli_path)
+
+    for file_path in file_paths:
+        if is_meaningful_file(file_path):
+            print(f"Validating Azure Resource Manager file: {file_path}")
+            try:
+                result = subprocess.run(
+                ['dotnet', 'run', '--', 'analyze-template', file_path],
+                cwd=analyzer_cli_path,
+                capture_output=True,
+                text=True
+                )
+                print(result.stdout)
+                print(result.stderr)
+                if result.returncode == 0 or result.returncode not in {10, 20, 21, 22}:
+                    validated_files.append(file_path)
+                    print("AZURE!!!!")
+                    print("!!!!!!!!!!!!!!!!!!",result.returncode)
+                    return True, validated_files
+            except FileNotFoundError:
+                print(f"File not found: {file_path}")
+            except Exception as e:
+                print(f"An error occurred while validating {file_path}: {e}")
+
+    print(result.returncode)            
+    return False, validated_files
+"""
+Finds azure template analyzer path, used for finding the Azure Template Analyzer Client on Mac OS configuration
+
+@returns 
+    analyzer_cli_path (str) : if analyzer client is properly initialized and built
+    None : if analyzer client was not properly initialized and built
+
+"""
+def find_analyzer_cli_path():
+    # Assuming the Analyzer.Cli is in the 'template-analyzer/src/Analyzer.Cli' directory relative to the current directory
+    current_dir = os.getcwd()
+    analyzer_cli_path = os.path.join(current_dir, 'template-analyzer', 'src', 'Analyzer.Cli')
+    if os.path.exists(analyzer_cli_path):
+        return analyzer_cli_path
+    return None
 
 """
 Runs Puppet parser (see README) on the list of files from a single repository
@@ -454,12 +517,11 @@ def PP_validation(file_paths):#good
                 print(e)
     return False,validated_files
 
-
+"""
+It adds a final output file with all the identified IaC tools per project
+"""
 def structure_final_file(unformatted_file):
-    """
-    It adds a final output file with all the identified IaC tools per project
-    """
-
+ 
     # Get the df
     df = pd.read_csv(unformatted_file)
 
@@ -478,12 +540,16 @@ def structure_final_file(unformatted_file):
     df.to_csv(unformatted_file, index=False)
 
 
+
 """
 Handles opening and writing to the output CSV.
 Each subsequent column after 'URL' is a 0/1 flag denoting each IAC's usage. 
 A column at the end stores the files validated by the parsers.
 """
 def main():
+    analyzer_path = find_analyzer_cli_path()
+    print(analyzer_path)
+    print ("\nSTOP\n")
     csv_file = "first_screening.csv"
     output_csv = "check_output.csv"
 
@@ -494,7 +560,7 @@ def main():
         writer = csv.writer(file)
         writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL", "BIC", "DOCK", "CHEF", "GOOG", "KUB", "ANS", "Validated files"])
 
-    for i in tqdm(range(0, 22)):  # 22 (for i in tqdm(range(0,len(df))):)
+    for i in tqdm(range(41, 44)):  # 22 (for i in tqdm(range(0,len(df))):)
         row = df.iloc[i]
         repo_id = row["ID"]
         # repo_url = row['URL']
