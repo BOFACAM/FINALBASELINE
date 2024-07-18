@@ -17,7 +17,7 @@ Ensure you have the following tools installed and configured on your system:
 6. **Salt Lint**
 7. **Pulumi**
 
-For Windows:
+For Windows and Mac OS:
 Before the code can be run, we must download the existing parsers on the web running on the files in the repo.
 
 ### Terraform (TF)
@@ -30,6 +30,11 @@ LINK- https://developer.hashicorp.com/terraform/install
 - Paste the exact path where you downloaded the parser. This allows your computer to use the executable in that folder.
 - Go to your terminal and do "Terraform --version"
 
+**MAC OS INSTALL**
+- First, you will need to intall Homebrew
+  '
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+'
 **SHOULD SHOW**: (may be different depending on version)
 ```
 Terraform --version
