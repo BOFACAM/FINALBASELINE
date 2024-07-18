@@ -152,7 +152,9 @@ My output for this was:
 ### Chef
 
 **UPDATED: MUST USE COOKSTYLE INSTEAD OF FOODCRITIC**
-**WINDOWS INSTALL**
+
+-----------------------------------------------------
+**WINDOWS INSTALL FOODCRITIC**
 
 LINK: https://rubyinstaller.org/downloads/
 
@@ -179,6 +181,7 @@ Verify the installation:
 foodcritic --version
 foodcritic 16.3.0
 ```
+-----------------------------------------------------------
 **MAC OS AND WINDOWS COOKSTYLE INSTALL**
 
   - Ensure Ruby is installed
