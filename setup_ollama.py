@@ -135,17 +135,20 @@ def main():
     # Example usage:
     json_file_path = jsonl_main()
     json_objects = get_json_from_jsonl(json_file_path)
-    for obj in json_objects:
-        print("obj \n")
-        print(obj)
-        print("\n")
-        ext_str = list_out_extensions(obj.get("extension"))
-        prompt = "Suppose you are a professional analyst specializing in Infrastructure as Code (IaC) tools. You have been given a Software Bill of Materials (SBOM) file representing a GitHub repository. Your task is to analyze this SBOM file and, given that the project uses a specific IaC tool, generate the corresponding specification files for that tool.The project in question uses " + obj.get("iac_tool") + ". Please return the specification files in "+ ext_str + " formats that accurately represent the infrastructure of the repository as described in the SBOM."
-        print(prompt)
-        model_name = 'falcon2'  
-        file_content = read_pickle(obj.get("sbom_path"))
-        response = run_model(model_name, prompt, file_content) 
-        print("Response:", response)
+    ex_obj = json_objects.pop(0)
+    #for obj in json_objects:
+
+    print("obj \n")
+    print(ex_obj)
+    print("\n")
+    ext_str = list_out_extensions(ex_obj.get("extension"))
+    prompt = "Suppose you are a professional analyst specializing in Infrastructure as Code (IaC) tools. You have been given a Software Bill of Materials (SBOM) file representing a GitHub repository. Your task is to analyze this SBOM file and, given that the project uses a specific IaC tool, generate the corresponding specification files for that tool.The project in question uses " + ex_obj.get("iac_tool") + ". Please return the specification files in "+ ext_str + " formats that accurately represent the infrastructure of the repository as described in the SBOM."
+    prompt2 = "Suppose you are a professional analyst specializing in Infrastructure as Code (IaC) tools. You have been given a Software Bill of Materials (SBOM) file representing a GitHub repository. Your task is to analyze this SBOM file and, given that the project uses a specific IaC tool, generate the corresponding specification files for that tool.The project in question uses " + ex_obj.get("iac_tool") + ". Please return the contents of the specification files in "+ ext_str + " that accurately represent the infrastructure of the repository as described in the SBOM. Just print the contents of the file here, no need to return an actual file for now. "
+    print(prompt2)
+    model_name = 'falcon2'  
+    file_content = read_pickle(ex_obj.get("sbom_path"))
+    response = run_model(model_name, prompt2, file_content) 
+    print("Response:", response)
 
 
    
