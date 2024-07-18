@@ -31,6 +31,7 @@ The installations require homebrew.
 LINK- https://developer.hashicorp.com/terraform/install
 
 **WINDOWS INSTALL**
+
 - Click the windows download - it will show either 386 or AMD64 (you will have to click what is compatible with your system).
 - You will then have to unzip the folder in whatever directory it was put to. This may be different for others but for me, it was Downloads.
 - Then go to your "Edit system environment variables", go to "Environment Variables" --> "System Variables" --> "Path" --> "Edit" --> "New".
@@ -45,9 +46,11 @@ on windows_386
 ```
 
 **LINUX INSTALL**
+
 Interface as well as CLI installation ways offered, more info in the provided link.
 
 **MAC OS INSTALL**
+
 - Run the following commands to download Terraform through homebrew.
   ```
   brew tap hashicorp/tap
@@ -64,10 +67,12 @@ Interface as well as CLI installation ways offered, more info in the provided li
   
   ```
 ### AWS
+
 Make sure you are doing this through the directory that you are working in or doing it through your default directory/root directory.
 LINK- https://github.com/aws-cloudformation/cfn-lint
 
 **MAC OS INSTALL**
+
 - Ensure Python3 is installed
   ```
   % python3 --version
@@ -90,6 +95,7 @@ LINK- https://github.com/aws-cloudformation/cfn-lint
   cfn-lint 1.5.3
   ```
 **WINDOWS INSTALL**
+
 The documentation should tell you what to do but for Windows assuming you have pip installed:
 - Command - pip install cfn-lint
 
@@ -127,6 +133,7 @@ LINK: https://github.com/Azure/template-analyzer
   ```
 
 **WINDOWS INSTALL**
+
 - Go to "Download the latest Template Analyzer release in the releases section."
 - You will pick TemplateAnalyzer-win-arm64.zip or TemplateAnalyzer-win-x64.zip
 - Again once downloaded make sure you keep track of the directory at which you downloaded and add it to your path.
@@ -140,8 +147,10 @@ My output for this was:
 ```
 
 ### Chef
+
 **UPDATED: MUST USE COOKSTYLE INSTEAD OF FOODCRITIC**
 **WINDOWS INSTALL**
+
 LINK: https://rubyinstaller.org/downloads/
 
 - Make sure to say put to path it will be a small box regarding to add ruby to path.
@@ -168,6 +177,7 @@ foodcritic --version
 foodcritic 16.3.0
 ```
 **MAC OS AND WINDOWS COOKSTYLE INSTALL**
+
   - Ensure Ruby is installed
       - MAC OS
         ```
@@ -204,6 +214,7 @@ WARNING: foodcritic may be out of date and will have to use cookstyle.
 Make sure you are on your root directory. This should be set as default but the command should be done in the user that you are working in.
 
 **WINDOWS INSTALL**
+
 LINK: https://www.puppet.com/docs/puppet/5.5/install_windows.html
 
 - Go straight to "Download the Windows puppet-agent package.
@@ -216,6 +227,7 @@ LINK: https://www.puppet.com/docs/puppet/5.5/install_windows.html
 Go to your "Edit system environment variables", go to "Environment Variables" --> "System Variables" --> "Path" --> "Edit" --> "New"
 
 **MAC INSTALL**
+
 - Install Puppet-agent through Homebrew Cask:
   ```
   %brew install --cask puppet-agent
@@ -226,12 +238,15 @@ Go to your "Edit system environment variables", go to "Environment Variables" --
   7.31.0
   ```
 ### Salt Lint
+
 **WINDOWS INSTALL**
+
 Install using pip:
 ```
 pip install salt-lint
 ```
 **MAC INSTALL**
+
 - Install using pip
   ```
    % pip install salt-lint
@@ -243,9 +258,11 @@ pip install salt-lint
   salt-lint 0.9.2
   ```
 ### Pulumi
+
 LINK: https://www.pulumi.com/docs/install/
 
 **WINDOWS INSTALL**
+
 - Click Windows Binary Download.
 - Unzip file where the Download was placed.
 - Then copy the file path of that download (if you currently in file explorer you should be able to hit the top of the search bar and get exact path).
@@ -257,6 +274,7 @@ LINK: https://www.pulumi.com/docs/install/
   v3.123.0
   ```
 **MAC INSTALL**
+
 - Install Pulumi with Homebrew
   ```
   %brew install pulumi
