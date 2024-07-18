@@ -106,8 +106,11 @@ cfn-lint 0.87.7
 ```
 
 ### Azure (template-analyzer)
+
 LINK: https://github.com/Azure/template-analyzer
+
 **MAC OS INSTALL**
+
 - Install .NET Core SDK
   ```
   %brew install --cask dotnet-sdk
