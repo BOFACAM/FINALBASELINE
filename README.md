@@ -154,6 +154,23 @@ pulumi version
 v3.123.0
 ```
 
+### Ansible
+
+Based on the official content parser developed by Ansible, only UNIX OS can be used.
+More info on: https://github.com/ansible/ansible-content-parser
+
+We encourage potential contributors on trying a validated approach to identify IaC Ansible use with Windows OS through:
+https://github.com/ansible/ansible-lint
+
+**STEPS for macOS:**
+
+- Follow the procedure in the provided first link. (It is clearly explained, we just automate it's use for our purposes)
+- Don't read the Execution section, that work is on us! ;)
+- Once the ansible-lint and ansible-content-parser are in the same version the parser should be ready to use.
+
+**Use of parser**
+- Check documentation of ```ansible_main()``` within ```ansible_check.py``` file.
+
 ## Running the Script
 
 Once all the parsers are downloaded, you should be able to execute `parsing_file.py` which executes all the parsers for the repos. Again not all of them are using parsers from the web, but instead through our own implementation of finding those files specific to the IAC tool.
