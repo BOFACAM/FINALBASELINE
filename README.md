@@ -32,9 +32,9 @@ LINK- https://developer.hashicorp.com/terraform/install
 
 **MAC OS INSTALL**
 - First, you will need to intall Homebrew
-  '''
+  ```
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  '''
+  ```
 **SHOULD SHOW**: (may be different depending on version)
 ```
 Terraform --version
