@@ -1,0 +1,14 @@
+<html>
+<head><title>404 Not Found</title></head>
+<body>
+<h1>404 Not Found</h1>
+<ul>
+<li>Code: NoSuchKey</li>
+<li>Message: The specified key does not exist.</li>
+<li>Key: mac/puppet5/puppet-agent-5.5.22-1.osx10.14.dmg</li>
+<li>RequestId: 0R2TH70SRX3CKA9C</li>
+<li>HostId: rXRgcOStcjwmxBNCF50ZUMg5a4Ox8FFWQHDY8wmPnXUyMAShmq6Vad9cWZuFlq3VnzsNAyVYdSE=</li>
+</ul>
+<hr/>
+</body>
+</html>

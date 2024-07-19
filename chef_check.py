@@ -19,7 +19,8 @@ Runs foodcritic chef parser on a given cookbook.
 
 @returns (int) : success or failure flag for running foodcritic on a cookbook
 """
-def run_foodcritic(cookbook_path):
+
+"""def run_foodcritic(cookbook_path):
     if not os.path.isdir(cookbook_path):
         print(f"Directory {cookbook_path} does not exist.")
         return 0
@@ -51,6 +52,48 @@ def run_foodcritic(cookbook_path):
         
     except Exception as e:
         print(f"An error occurred while running Foodcritic: {e}")
+        return 0"""
+
+"""
+Runs Cookstyle chef parser on a given cookbook.
+
+@param cookbook_path (str) : the path of the cookbook inside the repository
+
+@returns (int) : success or failure flag for running foodcritic on a cookbook
+"""
+
+def run_cookstyle(cookbook_path):
+    if not os.path.isdir(cookbook_path):
+        print(f"Directory {cookbook_path} does not exist.")
+        return 0
+    
+    try:
+        # Run the cookstyle command and write output to a text file
+        result = subprocess.run(['cookstyle', cookbook_path], capture_output=True, text=True)
+        
+        with open('cookstyle_output.txt', 'w') as f:
+            f.write(result.stdout)
+            f.write(result.stderr)
+
+        # Read the output from the text file
+        with open('cookstyle_output.txt', 'r') as f:
+            output = f.read()
+
+        # Print the output of the command
+        print("Cookstyle Output:")
+        print(output)
+
+        # Check the output for any specific messages you want to handle
+        if "0 files inspected" in output:
+            print(f"No files to check in the cookbook: {cookbook_path}")
+            os.remove('cookstyle_output.txt')
+            return 0
+        else:
+            os.remove("cookstyle_output.txt")
+            return 1
+        
+    except Exception as e:
+        print(f"An error occurred while running Cookstyle: {e}")
         return 0
 
 """
@@ -84,4 +127,4 @@ def chef_main(repo_dir):
     if not found:
         return 0
 
-    return run_foodcritic(cookbook_path)
+    return run_cookstyle(cookbook_path)
