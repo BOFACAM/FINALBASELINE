@@ -185,7 +185,6 @@ My output for this was:
       Cookstyle 7.32.8
           * RuboCop 1.25.1
       ```
-WARNING: foodcritic may be out of date and will have to use cookstyle.
 
 ### Puppet
 Make sure you are on your root directory. This should be set as default but the command should be done in the user that you are working in.
