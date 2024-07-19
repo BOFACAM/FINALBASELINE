@@ -237,6 +237,7 @@ def validate_repo(row):
         "KUB": 0,
         "ANS": 0
     }
+    print(tools_found)
 
     present,path = vagrant_validation(target_dir)
     if present:
@@ -247,7 +248,24 @@ def validate_repo(row):
     aws_files = [f for f in relevant_files if f.endswith(('.yaml', '.yml', '.json'))]
     az_files = [f for f in relevant_files if f.endswith('.json')]
     pup_files = [f for f in relevant_files if f.endswith('.pp')]
-  
+    
+    if 'ANS' in tools_found:
+        ansible = ansible_main(target_dir, repo_id)
+        if ansible == 1:
+            iac_dict["ANS"] = ansible
+    
+    
+
+    if 'AZ' in tools_found:
+        #appear, files = AZ_validation(az_files)
+        appear, files = AZ_validation_mac(az_files)
+        
+        # If you are using Mac OS, use this line instead of 'appear, files = AZ_validation(az_files)' : 
+        # appear, files = AZ_validation_mac(az_files)
+        if appear:
+            iac_dict["AZ"] = 1
+            validated_files.extend(files)
+    
     if 'AWS' in tools_found:
         appear, files = AWS_validation(aws_files)
         if appear:
@@ -300,25 +318,7 @@ def validate_repo(row):
         kubernetes, google = kub_google_main(target_dir)
         iac_dict["GOOG"]=google
         iac_dict["KUB"]=kubernetes
-
-    if 'ANS' in tools_found:
-        ansible = ansible_main(target_dir, repo_id)
-        if ansible == 1:
-            iac_dict["ANS"] = ansible
     
-    print(tools_found)
-    if 'AZ' in tools_found:
-        #appear, files = AZ_validation(az_files)
-        appear, files = AZ_validation_mac(az_files)
-        """
-        If you are using Mac OS, use this line instead of 'appear, files = AZ_validation(az_files)' : 
-
-        appear, files = AZ_validation_mac(az_files)
-        """
-        if appear:
-            iac_dict["AZ"] = 1
-            validated_files.extend(files)
-
     shutil.rmtree(target_dir, onerror=onerror)
     return iac_dict, validated_files, repo_url
 
@@ -448,25 +448,23 @@ def AZ_validation_mac(file_paths):
         if is_meaningful_file(file_path):
             print(f"Validating Azure Resource Manager file: {file_path}")
             try:
-                result = subprocess.run(
-                ['dotnet', 'run', '--', 'analyze-template', file_path],
-                cwd=analyzer_cli_path,
-                capture_output=True,
-                text=True
-                )
-                print(result.stdout)
-                print(result.stderr)
-                if result.returncode == 0 or result.returncode not in {10, 20, 21, 22}:
-                    validated_files.append(file_path)
-                    print("AZURE!!!!")
-                    print("!!!!!!!!!!!!!!!!!!",result.returncode)
-                    return True, validated_files
+                result = subprocess.run(['dotnet', 'run', '--', 'analyze-template', file_path],cwd=analyzer_cli_path,capture_output=True,text=True)
+                if result:
+                    print(result.stdout)
+                    print(result.stderr)
+                    if result.returncode == 0 or result.returncode not in {10, 20, 21, 22}:
+                        validated_files.append(file_path)
+                        print("AZURE : ")
+                        print(result.returncode)
+                        return True, validated_files
+                    else:
+
+                        print(result)
+                        print("Result not valid")
             except FileNotFoundError:
                 print(f"File not found: {file_path}")
             except Exception as e:
                 print(f"An error occurred while validating {file_path}: {e}")
-
-    print(result.returncode)            
     return False, validated_files
 """
 Finds azure template analyzer path, used for finding the Azure Template Analyzer Client on Mac OS configuration
@@ -560,7 +558,7 @@ def main():
         writer = csv.writer(file)
         writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL", "BIC", "DOCK", "CHEF", "GOOG", "KUB", "ANS", "Validated files"])
 
-    for i in tqdm(range(41, 44)):  # 22 (for i in tqdm(range(0,len(df))):)
+    for i in tqdm(range(15, 30)):  # 22 (for i in tqdm(range(0,len(df))):)
         row = df.iloc[i]
         repo_id = row["ID"]
         # repo_url = row['URL']
