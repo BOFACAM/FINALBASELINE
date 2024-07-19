@@ -82,7 +82,7 @@ LINK- https://github.com/aws-cloudformation/cfn-lint
   ```
   %brew install pip
   %pip3 --version
-  pip 24.1.2 from               /Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/pip (python 3.12)
+  pip 24.1.2 from /Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/pip (python 3.12)
   ```
 - Install cfn-lint using pip
   ```
@@ -152,6 +152,7 @@ My output for this was:
 ### Chef
 
 **UPDATED: MUST USE COOKSTYLE INSTEAD OF FOODCRITIC**
+
 **MAC OS AND WINDOWS COOKSTYLE INSTALL**
 
   - Ensure Ruby is installed
