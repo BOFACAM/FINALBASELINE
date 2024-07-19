@@ -15,4 +15,5 @@ TemplateAnalyzer-osx-arm64
 draft.ipynb
 ansible-outputs
 FINAL_CSV.csv
+.DS_Store
 new_output.csv
