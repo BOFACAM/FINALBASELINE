@@ -17,3 +17,4 @@ ansible-outputs
 FINAL_CSV.csv
 .DS_Store
 new_output.csv
+template-analyzer/

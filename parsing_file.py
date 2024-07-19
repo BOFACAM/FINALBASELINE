@@ -253,8 +253,6 @@ def validate_repo(row):
         ansible = ansible_main(target_dir, repo_id)
         if ansible == 1:
             iac_dict["ANS"] = ansible
-    
-    
 
     if 'AZ' in tools_found:
         #appear, files = AZ_validation(az_files)
@@ -271,7 +269,6 @@ def validate_repo(row):
         if appear:
             iac_dict["AWS"] = 1
             validated_files.extend(files)
-
 
     if 'PUP' in tools_found:
         appear, files = PP_validation(pup_files)
@@ -558,7 +555,7 @@ def main():
         writer = csv.writer(file)
         writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL", "BIC", "DOCK", "CHEF", "GOOG", "KUB", "ANS", "Validated files"])
 
-    for i in tqdm(range(15, 30)):  # 22 (for i in tqdm(range(0,len(df))):)
+    for i in tqdm(range(0, len(df))):  # 22 (for i in tqdm(range(0,len(df))):)
         row = df.iloc[i]
         repo_id = row["ID"]
         # repo_url = row['URL']

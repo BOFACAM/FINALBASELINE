@@ -129,11 +129,10 @@ LINK: https://github.com/Azure/template-analyzer
   ```
 - You should now see a Analyzer.Cli directory in template-analyzer/src
 - Find lines 259-263 in parsing_file.py and use the alternate line
-  ```
-  If you are using Mac OS, use this line instead of 'appear, files = AZ_validation(az_files)' :
-  
+- If you are using Mac OS, use this line instead of 'appear, files = AZ_validation(az_files)' :  
+```
         appear, files = AZ_validation_mac(az_files)
-  ```
+```
 
 **WINDOWS INSTALL**
 
@@ -176,7 +175,7 @@ My output for this was:
         ```
   - Install Cookstyle
       ```
-      %gem install cookstyle
+      %sudo gem install cookstyle
       ```
   - Verify installation
       ```
