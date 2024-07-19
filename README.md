@@ -152,36 +152,6 @@ My output for this was:
 ### Chef
 
 **UPDATED: MUST USE COOKSTYLE INSTEAD OF FOODCRITIC**
-
------------------------------------------------------
-**WINDOWS INSTALL FOODCRITIC**
-
-LINK: https://rubyinstaller.org/downloads/
-
-- Make sure to say put to path it will be a small box regarding to add ruby to path.
-- Once installed the terminal will show up prompting you what to download.
-- When I did this, I just pressed enter as that downloads everything. You will be prompted twice when you do this.
-- Once you are done, go to your terminal and input:
-
-Verify the installation:
-```
-ruby --version
-ruby 3.3.4 (2024-07-09 revision be1089c8ec) [x64-mingw-ucrt]
-```
-
-May be different depending on the version. Then we must download foodcritic:
-
-In the same terminal, we do:
-```
-gem install foodcritic
-```
-
-Verify the installation:
-```
-foodcritic --version
-foodcritic 16.3.0
-```
------------------------------------------------------------
 **MAC OS AND WINDOWS COOKSTYLE INSTALL**
 
   - Ensure Ruby is installed
