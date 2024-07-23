@@ -1,6 +1,7 @@
 import json
 import os
 import pandas as pd
+import pickle
 prompt = ''
 working_row = {
     "repo_id": '',
@@ -47,6 +48,22 @@ def append_to_jsonl_file(dictionary, file_path):
         file.write('\n')
 
 
+def convert_pickle_to_json(pickle_file_path, json_file_path):
+    # Step 1: Load the pickle file
+    with open(pickle_file_path, 'rb') as pickle_file:
+        data = pickle.load(pickle_file)
+    
+    # Step 2: Ensure the data is in a JSON-serializable format
+    # If the data is a custom object, convert it to a dictionary or list
+    # This step can vary depending on the structure of the SBOM data
+    # Example:
+    # if isinstance(data, CustomObject):
+    #     data = data.to_dict()
+    
+    # Step 3: Save the data as a JSON file
+    with open(json_file_path, 'w') as json_file:
+        json.dump(data, json_file, indent=4)
+
 
 def find_sbom_path(repo_id):
     base_dir='sbom-generator/project-sboms'
@@ -57,6 +74,17 @@ def find_sbom_path(repo_id):
         return path
     else:
         return None
+
+def list_out_extensions(list_ext):
+    if not list_ext:
+        return ""
+    if len(list_ext) == 1:
+        return list_ext[0]
+    
+    str_ret = list_ext[0]
+    for item in list_ext[1:]:
+        str_ret = str_ret + " and " + item
+    return str_ret
 
 def jsonl_main():
     # Path to your CSV file
@@ -90,19 +118,22 @@ def jsonl_main():
             if value == 1:
                 print("key:"+key)
                 sbom_path = find_sbom_path(working_row["repo_id"])
+                # Usage example
+                json_file_path = 'sbom_data.json'
+                convert_pickle_to_json(sbom_path, json_file_path)
+                ext_str = list_out_extensions(IAC_EXT["" +key])
+                prompt = "Suppose you are a professional analyst specializing in Infrastructure as Code (IaC) tools. You have been given a Software Bill of Materials (SBOM) file representing a GitHub repository. Your task is to analyze this SBOM file and, given that the project uses a specific IaC tool, generate the corresponding specification files for that tool.The project in question uses " + key + ". Please return the contents of the specification files in "+ ext_str + " that accurately represent the infrastructure of the repository as described in the SBOM. Just print the contents of the file here, no need to return an actual file for now. "
                 new_json = {
-                    "repo_id": working_row["repo_id"],
-                    "url": working_row["url"],
-                    "sbom_path":sbom_path,
-                    "iac_tool":key,
-                    "extension": IAC_EXT["" +key]
+                    "prompt":prompt,
+                    "sbom":json_file_path
                 }
                 print(new_json)
                 # Append the new dictionary to the JSONL file
                 append_to_jsonl_file(new_json, jsonl_file_path)
+    
     return jsonl_file_path
 
         
 
     
-#jsonl_main()
+jsonl_main()
