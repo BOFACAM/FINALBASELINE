@@ -1,0 +1,2 @@
+('com.github.mcci-catena/docker-iot-dashboard', '')
+('actions:actions/checkout', '2.3.4')

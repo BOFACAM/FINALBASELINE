@@ -1,0 +1,4 @@
+('com.github.akka/alpakka', '')
+('actions:actions/checkout', 'b4ffde65f46336ab88eb53be808477a3936bae11')
+('actions:coursier/setup-action', '7bde40eee928896f074dbb76d22dd772eed5c65f')
+('actions:coursier/cache-action', '1ff273bff02a8787bc9f1877d347948af647956d')

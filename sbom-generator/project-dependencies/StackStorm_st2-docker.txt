@@ -1,0 +1,2 @@
+('actions:actions/checkout', '3')
+('com.github.StackStorm/st2-docker', '')

@@ -1,0 +1,3 @@
+('com.github.ProjectEKA/consent-manager', '')
+('actions:actions/checkout', '1')
+('actions:actions/setup-java', '1')

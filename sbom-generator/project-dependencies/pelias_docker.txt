@@ -1,0 +1,2 @@
+('com.github.pelias/docker', '')
+('actions:actions/checkout', '2')

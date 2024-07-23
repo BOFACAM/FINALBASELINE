@@ -1,0 +1,7 @@
+('go:github.com/mmorejon/microservices-docker-go-mongodb/movies', '0.0.0-20210221200458-2995f731ed95')
+('go:github.com/mmorejon/microservices-docker-go-mongodb/users', '0.0.0-20210221200458-2995f731ed95')
+('go:github.com/mmorejon/microservices-docker-go-mongodb/bookings', '0.0.0-20210221200458-2995f731ed95')
+('go:github.com/gorilla/mux', '1.8.0')
+('go:go.mongodb.org/mongo-driver', '1.4.4')
+('go:github.com/mmorejon/microservices-docker-go-mongodb/showtimes', '0.0.0-20210221200458-2995f731ed95')
+('com.github.vigneshwari-duraisamy/AKSCinemaApp', '')

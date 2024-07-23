@@ -1,0 +1,7 @@
+('actions:actions/checkout', '1')
+('actions:actions/setup-python', '4')
+('com.github.HBPMedical/mip-deployment', '')
+('pip:requests', '~> 2.31')
+('pip:click', '~> 8.1')
+('pip:pytest', '~> 7.4')
+('actions:wei/git-sync', '3')

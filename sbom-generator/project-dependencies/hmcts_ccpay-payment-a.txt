@@ -1,0 +1,5 @@
+('actions:actions/cache', '4.*.*')
+('actions:actions/setup-java', '1.*.*')
+('actions:actions/stale', '9.*.*')
+('actions:actions/checkout', '4.*.*')
+('com.github.hmcts/ccpay-payment-app', '')

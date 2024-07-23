@@ -1,0 +1,6 @@
+('actions:docker/setup-qemu-action', '3.*.*')
+('actions:actions/download-artifact', '4.*.*')
+('com.github.barcus/bareos', '')
+('actions:peter-evans/dockerhub-description', '4.0.0')
+('actions:actions/checkout', '4.*.*')
+('actions:actions/upload-artifact', '4.*.*')

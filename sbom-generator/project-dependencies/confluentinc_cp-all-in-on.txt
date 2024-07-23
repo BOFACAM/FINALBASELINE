@@ -1,0 +1,5 @@
+('pip:requests', '')
+('maven:io.confluent:kafka-schema-registry-maven-plugin', '7.5.0')
+('pip:confluent-kafka', '>= 1.4.2')
+('pip:certifi', '')
+('com.github.confluentinc/cp-all-in-one', '')

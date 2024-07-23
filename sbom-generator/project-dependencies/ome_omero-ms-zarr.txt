@@ -1,0 +1,7 @@
+('actions:peter-evans/repository-dispatch', '1.*.*')
+('com.github.ome/omero-ms-zarr', '')
+('actions:pre-commit/action', '2.0.3')
+('actions:actions/setup-java', '3.*.*')
+('actions:actions/setup-python', '4.*.*')
+('actions:gradle/gradle-build-action', '2.*.*')
+('actions:actions/checkout', '4.*.*')

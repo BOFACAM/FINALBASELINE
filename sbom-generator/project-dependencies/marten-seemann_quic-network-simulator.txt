@@ -1,0 +1,6 @@
+('actions:actions/checkout', '2')
+('actions:docker/build-push-action', '2')
+('actions:docker/login-action', '1')
+('com.github.quic-interop/quic-network-simulator', '')
+('actions:docker/setup-qemu-action', '1')
+('actions:docker/setup-buildx-action', '1')

@@ -1,0 +1,7 @@
+('actions:cirrus-actions/rebase', 'b87d48154a87a85666003575337e27b8cd65f691')
+('actions:docker-library/bashbrew', 'HEAD')
+('com.github.nextcloud/docker', '')
+('actions:ad-m/github-push-action', 'master')
+('actions:peter-evans/create-or-update-comment', 'ca08ebd5dc95aa0cd97021e9708fcd6b87138c9b')
+('actions:actions/checkout', '4.*.*')
+('actions:actions/checkout', '8e5e7e5ab8b370d6c329ec480221332ada57f0ab')

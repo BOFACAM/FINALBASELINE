@@ -1,0 +1,8 @@
+('actions:actions/checkout', '2')
+('actions:actions/upload-artifact', '2')
+('actions:coursier/setup-action', '1.2.0-M2')
+('actions:coursier/cache-action', '6')
+('com.github.tmtsoftware/csw', '')
+('actions:actions/setup-node', '1')
+('actions:dawidd6/action-get-tag', '1')
+('actions:kpritam/slack-job-status-action', '1')

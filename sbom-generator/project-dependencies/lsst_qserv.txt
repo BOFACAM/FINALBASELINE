@@ -1,0 +1,8 @@
+('actions:lsst/rubin_workflows/.github/workflows/rebase_checker.yaml', 'main')
+('actions:lsst-sqre/ltd-upload', '1.*.*')
+('com.github.lsst/qserv', '')
+('actions:voxmedia/github-action-slack-notify-build', '1.*.*')
+('actions:dorny/paths-filter', '3.*.*')
+('actions:actions/setup-python', '5.*.*')
+('actions:actions/checkout', '4.*.*')
+('actions:docker/login-action', '3.*.*')

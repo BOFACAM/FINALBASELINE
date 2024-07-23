@@ -1,0 +1,6 @@
+('pip:redis', '3.5.3')
+('pip:flask', '2.0.1')
+('pip:watchdog', '2.1.5')
+('pip:celery', '5.1.2')
+('com.github.mattkohl/docker-flask-celery-redis', '')
+('pip:flower', '1.0.0')

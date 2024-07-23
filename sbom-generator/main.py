@@ -1,6 +1,6 @@
 import pickle
 import pandas as pd
-from get_sbom import get_metrics
+from get_sbom import get_metrics, fetch_dependencies
 import os
 import shutil
 import openpyxl
@@ -53,6 +53,10 @@ def main():
         print("> ZIP file created") 
     else: 
         print("> ZIP file not created")
+
+    # Additional stage to reduce data dimension:
+    fetch_dependencies(path=root_path)
+
 
 if __name__ == "__main__":
     main()

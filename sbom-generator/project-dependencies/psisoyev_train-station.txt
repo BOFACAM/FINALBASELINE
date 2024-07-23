@@ -1,0 +1,6 @@
+('com.github.psisoyev/train-station', '')
+('actions:actions/checkout', '2')
+('actions:olafurpg/setup-scala', '10')
+('actions:actions/cache', '1')
+('actions:scala-steward-org/scala-steward-action', '2')
+('actions:coursier/cache-action', '5')

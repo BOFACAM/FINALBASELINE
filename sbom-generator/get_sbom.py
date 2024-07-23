@@ -4,6 +4,7 @@ MORE INFORMATION ON THE PROCESS IN PAPER: https://zenodo.org/records/11100100
 NOTE: If this code is used we need to cite this work.
 """
 
+import pickle
 import time
 import requests
 import os
@@ -107,6 +108,28 @@ def get_metrics(repo_names):
             write_statement(file=os.path.join(root_path, "log_error.txt"), msg=f"Failed to retrieve metrics for {repo_name}. Skipping...")
 
     return all_metrics
+
+
+def fetch_dependencies(path):
+    """
+    From the mined sboms fetches the project dependencies into text files for data dimensionality reduction
+    """
+    sbom_path = os.path.join(path, "project-sboms")
+    sbom_pickles = os.listdir(sbom_path)
+    for sbom in sbom_pickles:
+        picklefile = pickle.load(open(os.path.join(sbom_path,sbom), mode="rb"), fix_imports=True, encoding='utf-8', errors='strict', buffers=None)
+        dependencies = picklefile['Dependencies'][0]["packages"]
+        dependencies_set = set()
+        for dep in dependencies:
+            dependencies_set.add((dep["name"], dep["versionInfo"]))
+
+        sbom_name = sbom.rstrip(".pickle") + ".txt"
+        if not os.path.exists(os.path.join(path, "project-dependencies")):
+            os.mkdir(os.path.join(path, "project-dependencies"))
+        with open(os.path.join(path, "project-dependencies", sbom_name), 'w') as file:
+            for pair in dependencies_set:
+                file.write(f"{pair}\n")
+        file.close()
 
 """
 if __name__ == "__main__":

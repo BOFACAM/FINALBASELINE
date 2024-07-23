@@ -1,0 +1,7 @@
+('actions:actions/cache', '2.1.0')
+('actions:actions/checkout', '2')
+('actions:actions/setup-java', '2')
+('actions:actions/upload-artifact', '2')
+('actions:codecov/codecov-action', '1')
+('actions:actions/download-artifact', '2')
+('com.github.pravega/pravega', '')

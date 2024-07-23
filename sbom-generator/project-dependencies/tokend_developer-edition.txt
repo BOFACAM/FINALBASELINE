@@ -1,0 +1,1 @@
+('com.github.tokend/developer-edition', '')
