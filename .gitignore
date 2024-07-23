@@ -18,3 +18,5 @@ FINAL_CSV.csv
 .DS_Store
 new_output.csv
 template-analyzer/
+FINAL_CSV_1.csv
+log_error.txt

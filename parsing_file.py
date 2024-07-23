@@ -1,5 +1,5 @@
 import pandas as pd
-from git import Repo
+from git import Repo, GitCommandError
 import os
 import subprocess
 import shutil
@@ -8,6 +8,7 @@ from tqdm import tqdm
 import json
 import yaml
 import csv
+import multiprocessing
 
 from salt_check import *
 from pulumi_check import *
@@ -191,8 +192,13 @@ def process_single_row(row):
     found_extensions = raw_json_data["found_extensions"]
     target_dir = os.path.join(get_home_directory(), raw_json_data["id"].replace("\\", "/"))
 
-    clone_repo(repo_url, target_dir)
-    
+    try:
+        clone_repo(repo_url, target_dir)
+    except GitCommandError as e:
+        with open("log_error.txt", "a") as log_error:
+            log_error.write(f"Repo: {repo_id}, Error: {e}\n")
+
+
     relevant_files = []
     for ext in found_extensions:
         if ext in files:
@@ -335,6 +341,20 @@ def vagrant_validation(target_dir):
             return True, os.path.join(root, "Vagrantfile")
     return False, None
 
+
+def copy_file(source, dest):
+    """
+    Copies file into temporary location
+    """
+
+    try:
+        shutil.copy(source, dest)
+        return True
+    except Exception as e:
+        print(f"Error copying file: {e}")
+        return False
+
+
 """
 Runs a terraform validator (see README) on a file from the given list of file paths.
 
@@ -345,6 +365,7 @@ Runs a terraform validator (see README) on a file from the given list of file pa
     True : if there was a file encountered that tested positive for the terraform validation
     False : if there was no file found that tested positive for the terraform validation
 """
+
 #TERRAFORM
 def init_validate_terraform_files(file_paths):
     validated_files=[]
@@ -354,7 +375,20 @@ def init_validate_terraform_files(file_paths):
             try:
                 temp_dir = os.path.join(os.path.dirname(file_path), 'temp_terraform_validate')
                 os.makedirs(temp_dir, exist_ok=True)
-                shutil.copy(file_path, temp_dir)
+
+                # Monitorize the time the program takes to copy the file, if hung for 1 minute, then it jumps into next file.
+                p = multiprocessing.Process(target=copy_file, args=(file_path, temp_dir))
+                # shutil.copy(file_path, temp_dir)
+                p.start()
+                p.join(timeout=60)
+
+                if p.is_alive():  # If the time went by and the file didn't get copied yet, there must be some permision issues, we skip.
+                    p.terminate()
+                    p.join()
+                    print(f"> Terraform file {file_path} took too much time to get copied.")
+                    shutil.rmtree(temp_dir, onerror=onerror)
+                    continue
+
                 init_result = subprocess.run(['terraform', 'init'], cwd=temp_dir, capture_output=True, text=True)
                 if init_result.returncode != 0:
                     shutil.rmtree(temp_dir, onerror=onerror)
@@ -512,6 +546,7 @@ def PP_validation(file_paths):#good
                 print(e)
     return False,validated_files
 
+
 """
 It adds a final output file with all the identified IaC tools per project
 """
@@ -524,13 +559,13 @@ def structure_final_file(unformatted_file):
     df["IaC_tools"] = ''
 
     # Fill the new column with the IaC tools
-    for ind in df.index:
+    for ind in range(0, len(df)):
         iac_tools = []
-    for col_ind in range(2, 16):  # Index numbers of the parser names in the pandas columns
-        if df.iloc[ind, col_ind] == 1:
-            colname = df.columns[col_ind]
-            iac_tools.append(colname)
-    df.iloc[ind, len(df.columns)-1] = ", ".join(iac_tools)
+        for col_ind in range(2, 16):  # Index numbers of the parser names in the pandas columns
+            if df.iloc[ind, col_ind] == 1:
+                colname = df.columns[col_ind]
+                iac_tools.append(colname)
+        df.iloc[ind, len(df.columns)-1] = ", ".join(iac_tools)
 
     df.to_csv(unformatted_file, index=False)
 
@@ -550,12 +585,17 @@ def main():
 
     df = read_csv(csv_file)
 
+    if os.path.exists(output_csv):
+        output_df = pd.read_csv(output_csv)
+        starting_pro_index = len(output_df)
+    else:
+        with open(output_csv,'w') as file:
+            writer = csv.writer(file)
+            writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL", "BIC", "DOCK", "CHEF", "GOOG", "KUB", "ANS", "Validated files"])
 
-    with open(output_csv,'w') as file:
-        writer = csv.writer(file)
-        writer.writerow(["Repo_id", "URL", "VAG", "AWS", "AZ", "PUP", "TF/OT", "SS", "PUL", "BIC", "DOCK", "CHEF", "GOOG", "KUB", "ANS", "Validated files"])
+        starting_pro_index = 0
 
-    for i in tqdm(range(0, len(df))):  # 22 (for i in tqdm(range(0,len(df))):)
+    for i in tqdm(range(starting_pro_index, len(df))):  # 22 (for i in tqdm(range(0,len(df))):)
         row = df.iloc[i]
         repo_id = row["ID"]
         # repo_url = row['URL']
