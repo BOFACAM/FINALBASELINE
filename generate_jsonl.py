@@ -127,18 +127,23 @@ def json_main():
                 txt_set = get_txt_list(working_row["repo_id"])
                 ext_list = list_out_extensions(IAC_EXT[key])
                 #print(ext_list)
-                system = "Suppose you are an artifact installed in a server that provides IaC configuration files. You have been given a list of a GitHub repository's project dependencies with their versions.Your task is to analyze this list of dependencies and, given that the project uses a specific IaC tool, generate the corresponding specification files for that tool."
-                user = "Provide an IaC configuration " + ext_list + " file for the " + key + " IaC tool, based on the provided list of dependencies: "+ txt_set + " ."
-
+                system = "Suppose you are an artifact installed on a server that provides Infrastructure as Code (IaC) configuration files. You have been given a list of dependencies with their versions from a GitHub repository named \"" + working_row["repo_id"] + "\" The project uses the " + key + " IaC tool. Your task is to analyze the provided list of dependencies and generate the corresponding " + key + " configuration files in the following formats: "+ ext_list+ "."
+                user = "Generate the following " + key + " configuration files based on the provided list of dependencies: " + txt_set + " .Please ensure that each file is correctly formatted according to " + key + " standards and includes all necessary configurations based on the dependencies. For now just print the content of each file here in your response.Don't give any blurb, just the file content. Give the entire file."
                 new_json = {
                     "repo":working_row["repo_id"],
                     "iac_tool":key,
-                    "system": system,
-                    "user":user
+                    "system": {"role": "system", "message": system},
+                    "user": {"role": "user", "message": user}
+                    
+                    #"system": system,
+                    #"user":user,
+                    #"role":"system"
+
+
                 }
                 
                 #print(new_json)
                 # Append the new dictionary to the JSONL file
                 append_to_jsonl_file(new_json, jsonl_file_path)
 
-        
+json_main()

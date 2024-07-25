@@ -6,6 +6,7 @@ import json
 line_gen = None
 responses = {}
 all_llms = ["llama3","gemma","mistral","stablelm2","falcon2","dbrx"]
+
 def jsonl_line_generator(file_path):
     with open(file_path, 'r') as file:
         for line in file:
@@ -140,8 +141,6 @@ def main():
     #write responses header
     write_csv_header(responses_path)
 
-    
-
     #2. read jsonl and get 1 line at a time
 
     file_path = 'data.jsonl'
@@ -167,7 +166,8 @@ def main():
             "falcon2":"",
             "dbrx":""
         }
-        combined_prompt = system + user
+        combined_prompt = str("role:" + system["role"] + "," + "message:" + system["message"] + "," +
+        "role:" + user["role"] + "," + "message:" + user["message"])
         print(combined_prompt)
         #pass in prompt for specific iac in repo for each llm
         for llm in all_llms:
@@ -175,15 +175,16 @@ def main():
             #store responses for each llm
             iac_responses[llm]=response
             print(llm, iac_responses[llm])
-        
-
+            print(iac_responses)
         next_line = get_next_jsonl_line()
         if next_line.get("repo")==id:
             #if same repo, then append iac,responses for the prompt to the temp
             temp[iac_label] = iac_responses
+            print(temp)
         else:
             #if not the same repo, then append new field to responses  = 'repo_x' : { iac1: {}, iac2: {} , .... }
             responses[id_responses_label]=temp
+            print(responses)
             append_csv_line(responses_path, id_responses_label,temp)
 
 """
