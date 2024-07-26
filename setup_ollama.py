@@ -1,11 +1,29 @@
 import csv
+import os
 import subprocess
 from generate_jsonl import json_main
 import json
+from file_writer import write_files
 
 line_gen = None
 responses = {}
-all_llms = ["llama3","gemma","mistral","stablelm2","falcon2","dbrx"]
+#all_llms = ["llama3","gemma","mistral","stablelm2","falcon2","dbrx"]
+all_llms = ["llama3"]
+
+
+def delete_file(file_path):
+    """
+    Deletes the specified file.
+
+    :param file_path: The path to the file to delete.
+    """
+    try:
+        os.remove(file_path)
+        print(f"File {file_path} has been deleted.")
+    except FileNotFoundError:
+        print(f"File {file_path} not found.")
+    except Exception as e:
+        print(f"An error occurred while trying to delete the file: {e}")
 
 def jsonl_line_generator(file_path):
     with open(file_path, 'r') as file:
@@ -126,6 +144,22 @@ def write_csv_header(file_path):
         writer = csv.writer(file)
         writer.writerow(["repo", "responses"])
 
+def write_to_file(file_path, content):
+    """
+    Writes the given content to the specified file.
+
+    :param file_path: The path to the file where content should be written.
+    :param content: The string content to write to the file.
+    """
+    try:
+        with open(file_path, 'w') as file:
+            file.write(content)
+        print(f"Content successfully written to {file_path}")
+    except Exception as e:
+        print(f"An error occurred while writing to the file: {e}")
+
+# Example usage:
+# write_to_file('example.txt', 'This is some sample content.')
 def append_csv_line(file_path, repo, responses):
     with open(file_path, mode='a', newline='') as file:
         writer = csv.writer(file)
@@ -134,13 +168,6 @@ def append_csv_line(file_path, repo, responses):
 def main():
     #1. populate jsonl
     json_main()
-
-    responses_path = 'responses.csv'
-
-
-    #write responses header
-    write_csv_header(responses_path)
-
     #2. read jsonl and get 1 line at a time
 
     file_path = 'data.jsonl'
@@ -148,7 +175,6 @@ def main():
     next_line = get_next_jsonl_line()
     #3. use line
     while next_line is not None:
-
         #store system and user prompts and id
         system = next_line.get("system")
         user = next_line.get("user")
@@ -156,37 +182,16 @@ def main():
         id_responses_label = "repo_" + id
         iac_label = next_line.get("iac_tool")
 
-        #stores {"iac":responses, "iac": responses, ...}
-        temp = {}
-        iac_responses = {
-            "llama3":"",
-            "gemma":"",
-            "mistral":"",
-            "stablelm2":"",
-            "falcon2":"",
-            "dbrx":""
-        }
-        combined_prompt = str("role:" + system["role"] + "," + "message:" + system["message"] + "," +
-        "role:" + user["role"] + "," + "message:" + user["message"])
+        combined_prompt = str("role:" + system["role"] + "," + "content:" + system["content"] + "," + "role:" + user["role"] + "," + "content:" + user["content"])
         print(combined_prompt)
         #pass in prompt for specific iac in repo for each llm
         for llm in all_llms:
             response = run_model(llm, combined_prompt)
-            #store responses for each llm
-            iac_responses[llm]=response
-            print(llm, iac_responses[llm])
-            print(iac_responses)
-        next_line = get_next_jsonl_line()
-        if next_line.get("repo")==id:
-            #if same repo, then append iac,responses for the prompt to the temp
-            temp[iac_label] = iac_responses
-            print(temp)
-        else:
-            #if not the same repo, then append new field to responses  = 'repo_x' : { iac1: {}, iac2: {} , .... }
-            responses[id_responses_label]=temp
-            print(responses)
-            append_csv_line(responses_path, id_responses_label,temp)
-
+            delete_file('response.txt')
+            with open('response.txt', 'w') as file:
+                file.write(response)
+            write_files('response.txt',id_responses_label,iac_label,llm)
+            
 """
     # Example usage:
     prompt = "Tell me a joke."

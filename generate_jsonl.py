@@ -128,12 +128,12 @@ def json_main():
                 ext_list = list_out_extensions(IAC_EXT[key])
                 #print(ext_list)
                 system = "Suppose you are an artifact installed on a server that provides Infrastructure as Code (IaC) configuration files. You have been given a list of dependencies with their versions from a GitHub repository named \"" + working_row["repo_id"] + "\" The project uses the " + key + " IaC tool. Your task is to analyze the provided list of dependencies and generate the corresponding " + key + " configuration files in the following formats: "+ ext_list+ "."
-                user = "Generate the following " + key + " configuration files based on the provided list of dependencies: " + txt_set + " .Please ensure that each file is correctly formatted according to " + key + " standards and includes all necessary configurations based on the dependencies. For now just print the content of each file here in your response.Don't give any blurb, just the file content. Give the entire file."
+                user = "Generate the following " + key + " configuration files based on the provided list of dependencies: " + txt_set + " .Please ensure that each file is correctly formatted according to " + key + " standards and includes all necessary configurations based on the dependencies. For now just print the content of each file here in your response.Don't give any blurb,concisely just the file content. Give the entire file. Answer in the format x.extension: [file content] \n y.extension[file content], etc. where x,y match the IaC required file names.Give every file necessary for the IaC configuration. The extensions should be the ones as previously mentioned: " + ext_list + "."
                 new_json = {
                     "repo":working_row["repo_id"],
                     "iac_tool":key,
-                    "system": {"role": "system", "message": system},
-                    "user": {"role": "user", "message": user}
+                    "system": {"role": "system", "content": system},
+                    "user": {"role": "user", "content": user}
                     
                     #"system": system,
                     #"user":user,
@@ -146,4 +146,4 @@ def json_main():
                 # Append the new dictionary to the JSONL file
                 append_to_jsonl_file(new_json, jsonl_file_path)
 
-json_main()
+#json_main()
