@@ -350,3 +350,21 @@ There are some GitHub links that aren't compatible with Windows due to its sensi
 - **TibebeJS_masterlance** (Line 293)
 
 You should be seeing validating print statements showing the code working. This process will take a long time. There is range for the repos that you might wanna set yourself as well be free to change that. you wont be able to run this the whole way through due to the issues above. This has not been fully tested on linux or mac.
+
+# GENERATING JSONL FILE (STEP 2)
+
+
+
+# Multi-API LLM Integration (STEP 3)
+
+This project integrates multiple LLM API inclueing OpenAI, Anthropic's Claude, Google's Gemini, and Cohere. It reads input data from a JSONL file, processes it, and stores the responses from each API into a json for that respective JSONL file.
+
+## Setup Instructions
+
+### Step 1:
+
+
+
+
+
+
