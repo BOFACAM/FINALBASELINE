@@ -359,57 +359,59 @@ You should be seeing validating print statements showing the code working. This 
 
 # Multi-API LLM Integration (STEP 3)
 
-This project integrates multiple LLM API including OpenAI, Anthropic's Claude, Google's Gemini, and Cohere. It reads input data from a JSONL file, processes it, and stores the responses from each API into a json for that respective JSONL file.
+This project integrates multiple LLM APIs including OpenAI, Anthropic's Claude, Google's Gemini, and Cohere. It reads input data from a JSONL file, processes it, and stores the responses from each API into a JSONL file for that respective JSONL file.
 
 ## Setup Instructions
 
-### Step 1: SETTING UP API KEYS FOR LLMS(WINDOWS)
+### Step 1: Setting Up API Keys for LLMs (Windows)
 
-1.OpenAI
+1. **OpenAI**
+- Visit the [OpenAI Quickstart](https://platform.openai.com/docs/quickstart) to get started.
+- Obtain your API key from the [OpenAI API Keys](https://platform.openai.com/api-keys) page and save it securely.
 
-https://platform.openai.com/docs/quickstart - directs you to get apikey
-https://platform.openai.com/api-keys -get api key make sure to document your api key so you can set it properly
+ 2. **Claude 3.5**
+- Sign up and get your API key from the [Anthropic Console](https://console.anthropic.com/). Save your key securely.
 
-2.Claude 3.5
+3. **Gemini**
+- Sign up and obtain your API key from [Google AI Studio](https://aistudio.google.com/app/prompts/new_chat). Save your key securely.
 
-https://console.anthropic.com/ -  sign up and get api key again document/save your key somewhere 
+ 4. **Cohere**
+- Sign up and get your API key from the [Cohere Dashboard](https://dashboard.cohere.com/api-keys). Save your key securely.
 
-3.Gemini
+Once you have all your API keys, set the environment variables using the `setx` command. This command sets environment variables permanently for the user.
 
-https://aistudio.google.com/app/prompts/new_chat - sign up and get api key save key
+For each API key, use the following template:
+```
+setx ANTHROPIC_KEY "apikey"
+setx GOOGLE_API_KEY "apikey"
+setx OPENAI_API_KEY "apikey"
+setx CO_API_KEY "apikey"
+```
 
-4. Cohere
- https://dashboard.cohere.com/api-keys - same thing as above
+### Step 2: Setting Up Virtual Environment and Necessary Installations
 
+1. **Create a Virtual Environment**
+   
+  Run the following command in your VSCode terminal or in the terminal where you cloned this project:
+  ```
+  venv/Scripts/activate
+  pip install google-generativeai langchain-google-genai streamlit pillow
+  pip install --upgrade openai
+  pip install anthropic
+  pip install cohere
+  ```
 
-Once done we need to set the envrionement variables for your API keys. Since we are setting a value with the environment variable, we need to use the "setx" command which sets envrionment variables permanently for the user. 
+### Step 3: Running the Code
 
-For each API key, we need this template:
+1. **Run the Script**
+
+   ```bash
+   python APISKELTON.py
   
-  setx ANTHROPIC_KEY "apikey"
-  setx GOOGLE_API_KEY "apikey"
-  setx OPENAI_API_KEY "apikey"
-  setx CO_API_KEY "apikey"
+The output will be appended to your respective JSONL files for each LLM.
+The process will go through OpenAI, Claude 3.5, Gemini, and then Cohere.
 
-### Step 2: Setting up virtual environment and necessary installations
-
-Run python -m venv venv in your vscode terminal or where you cloned this project in your main terminal
-venv/Scripts/activate
-pip install google-generativeai langchain-google-genai streamlit pillow
-pip install --upgrade openai
-pip install anthropic
-pip install cohere
-
-### STEP 3: Running code
-
-python APISKELTON.py
-
-ouputwise you should be your .jsonL per LLM appending reponses. This may take awhile. The order would be openai, claude3.5, Gemini, and then Cohere. 
-
-MUST CHANGE I HAVENT TESTED THIS. THIS IS JUST A BASE FOR US TO WORK OFF. THX :)
-
-
-
+> **Note:** **This is a base version and hasn't been fully tested. Adjustments may be necessary. Thank you!**
 
     
 
