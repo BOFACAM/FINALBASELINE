@@ -29,12 +29,21 @@ import os
 #https://www.datacamp.com/tutorial/cohere-api-tutorial cohere
 #https://cohere.com/llmu/building-a-chatbot
 
-
+# Set API keys from environment variables
 openai.api_key = os.environ["OPENAI_API_KEY"]
 anthropic_key = os.getenv("ANTHROPIC_KEY")
 google_api_key = os.getenv("GOOGLE_API_KEY")
 cohere_api_key = os.getenv("CO_API_KEY")
 
+
+"""
+Given the JSONL file, return two lists: one containing the system and user dictionaries, 
+and another containing the repository identifiers.
+
+@param jsonL(file) : JSONL file with keys 'repo','iac_tool', 'system', and 'user'
+
+@returns: Two lists (data, repo_ids) - data containing system and user dictionaries, and repo_ids containing repository identifiers.
+"""
 def read_jsonL(jsonL):
     data =[]
     repo_ids = []
@@ -49,6 +58,12 @@ def read_jsonL(jsonL):
     return data,repo_ids
             
 
+"""
+Run Claude 3 API calls and append the responses to a JSONL file.
+
+@param data (list): List of tuples containing system and user data.
+@param repo_ids (list): List of repository identifiers.
+"""
 def run_claude3(data,repo_ids):
     client = anthropic.Anthropic(api_key = anthropic_key)
 
@@ -76,7 +91,12 @@ def run_claude3(data,repo_ids):
         print(f"Error with Claude3:{e}")
         return None
 
+"""
+Run Gemini API calls and append the responses to a JSONL file.
 
+@param data (list): List of tuples containing system and user data.
+@param repo_ids (list): List of repository identifiers.
+"""
 def run_gemini(data,repo_ids):
     genai.configure(api_key=google_api_key)#os.environ["GOOGLE_API_KEY"]
 
@@ -104,7 +124,12 @@ def run_gemini(data,repo_ids):
         print(f"Error with Gemini3: {e}")
         return None
 
-    
+"""
+Run OpenAI API calls and append the responses to a JSONL file.
+
+@param data (list): List of tuples containing system and user data.
+@param repo_ids (list): List of repository identifiers.
+"""   
 def run_openai(data,repo_ids):
     client = OpenAI()
 
@@ -135,6 +160,12 @@ def run_openai(data,repo_ids):
         print(f"Error with ChatGpt:{e}")
         return None
 
+"""
+Run Cohere API calls and append the responses to a JSONL file.
+
+@param data (list): List of tuples containing system and user data.
+@param repo_ids (list): List of repository identifiers.
+"""
 def run_cohere(data,repo_ids):
     co = cohere.Client(cohere_api_key)
 
