@@ -351,13 +351,22 @@ There are some GitHub links that aren't compatible with Windows due to its sensi
 
 You should be seeing validating print statements showing the code working. This process will take a long time. There is range for the repos that you might wanna set yourself as well be free to change that. you wont be able to run this the whole way through due to the issues above. This has not been fully tested on linux or mac.
 
-# GENERATING JSONL FILE (STEP 2)
+# GENERATE PROJECT DEPENDENCIES (STEP 2)
+
+# GENERATING JSONL FILE (STEP 3)
+
+To generate the .jsonl file storing the file dependencies, IaC tool usage flags and their respective prompts, the table from (STEP 1) must be fully generated for every repository.
+
+The procedure for generating the .jsonl file is listed below. 
+
+  1. Store the row for one repository in a dictionary, call this the working_row
+  2. Go through the values of the working_row, checking which IaC tools tested true in the first screening (value = 1), and temporarily store the marked IaC tool, its corresponding extensions for their configuration files, the repository id, and its corresponding project dependencies generated in (STEP 2).
+  3. Take all of these fields in 2. and mention them in a formatted prompt, having the prompts as the tailored fields of a new json row.
+  4. Append the new json row to the jsonl file.
+  5. This results in 1-13 IaC-tool-distinct json rows per repository, in the jsonl file.
 
 
-
-
-
-# Multi-API LLM Integration (STEP 3)
+# Multi-API LLM Integration (STEP 4)
 
 This project integrates multiple LLM APIs including OpenAI, Anthropic's Claude, Google's Gemini, and Cohere. It reads input data from a JSONL file, processes it, and stores the responses from each API into a JSONL file for that respective JSONL file.
 
