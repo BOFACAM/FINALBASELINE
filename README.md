@@ -3,7 +3,20 @@
 
 ## Overview
 
-This repository contains scripts and configurations to validate Infrastructure as Code (IaC) tools using various parsers. The following instructions guide you through setting up the necessary tools and executing the `parsing_file.py` script.
+This repository contains scripts and configurations utilized to run our research project. In a nutshell, the publshed project repository includes the validation
+on the use of existing IaC tools through the automated validation based on the latest official configuration-file parsers. 
+Furthermore, it collects the project dependecy data from the GitHub generated dependency graph. With the collected data, 
+it generates a server-based multi-LLM chat, fitted with generated JSONL files addressing the dependency data (SBOMs). The objective
+is to draft the foundations of automated generation of IaC configuration files at diverse stages of a software project based on 
+diverse potential _a priori_ information, in the case of this study SBOMs.
+
+To perform this project, the following series of activities were developed/executed:
+
+- **STEP1**: Validate Infrastructure as Code (IaC) tools using various parsers. The following instructions guide you through setting up the necessary tools and executing the `parsing_file.py` script.
+- **STEP2**: Generating and collecting the project dependencies from GitHub.
+- **STEP3**: Generating JSONL files for chat communication with the adopted Large Language Models.
+- **STEP4**: Multi-API LLM integration process for interactive conversation with multiple LLMs for IaC configuration file generation.
+
 
 ## Prerequisites
 
@@ -352,6 +365,18 @@ There are some GitHub links that aren't compatible with Windows due to its sensi
 You should be seeing validating print statements showing the code working. This process will take a long time. There is range for the repos that you might wanna set yourself as well be free to change that. you wont be able to run this the whole way through due to the issues above. This has not been fully tested on linux or mac.
 
 # GENERATE PROJECT DEPENDENCIES (STEP 2)
+
+With the option to be performed while executing STEP 1, the following stage collects the data related to the project dependencies of each of
+the projects included in the adopted MS dataset. For that, we collect the _Software Bill of Materials_ (SBOM) which can be collected from
+the GitHub generated [Dependency Graph](https://docs.github.com/en/rest/dependency-graph/sboms?apiVersion=2022-11-28) through its REST API for instance.
+
+To execute this stage the reader need only to activate the specified `python virtual environment` and run:
+
+  1.    Inside the project folder `/sbom-generator`, specify the global paths in `commons.py` as documented in the comments writen in the same file.
+2. In the same folder, within the file `get_sbom.py` introduce the generated GitHub token in **line 34**.
+3. Inside the project folder, execute `/sbom-generator/main.py`
+ 
+
 
 # GENERATING JSONL FILE (STEP 3)
 

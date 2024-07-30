@@ -9,6 +9,7 @@ from commons import data_storage_path, root_path
 
 def check_log_files():
     """
+    Process monitoring log files for process correctness
     """
     output_path = os.path.join(root_path, "log_out.txt")
     error_path = os.path.join(root_path, "log_error.txt")
@@ -23,6 +24,9 @@ def check_log_files():
 
 
 def main():
+    """
+    Generates the SBOM files for the projects existing in the MS dataset used in this project.
+    """
     
     # Check previous log files:
     check_log_files()    

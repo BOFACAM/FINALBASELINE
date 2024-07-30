@@ -26,6 +26,11 @@ def countdown(total):
 
 
 def get_sbom_dependencies(full_name):
+    """
+    Based on the provided GitHub project name ({username}/{repo}) this function
+    collects the sbom data and stores it in a pickle file
+    """
+
     token = "your-github-token"  # NOTE ON THIS
     try:
         # Make a request to the GitHub API for dependency graph SBOM

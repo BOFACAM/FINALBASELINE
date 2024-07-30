@@ -1,5 +1,9 @@
-data_storage_path = "/home/mikel/projects/sbom-generator/project-sboms"
-root_path = "/home/mikel/projects/sbom-generator/"
+"""
+File with global variables for the sbom generation stage
+"""
+
+data_storage_path = "~/iac-parsers-24/sbom-generator/project-sboms"
+root_path = "~/iac-parsers-24/sbom-generator/"
 
 
 def write_statement(file, msg):
