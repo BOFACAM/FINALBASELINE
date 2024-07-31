@@ -446,9 +446,35 @@ setx CO_API_KEY "apikey"
 
    ```bash
    python APISKELTON.py
-  
+
 The output will be appended to your respective JSONL files for each LLM.
 The process will go through OpenAI, Claude 3.5, Gemini, and then Cohere.
+
+1. **Run the Script**
+
+   ```bash
+   python setup_ollama.py
+
+By running this file, you will be able to chat and ask for revisions of the configuration files response, and when you are happy with the results, simply type 'exit' to save the chat history.
+This file populates a directory hierarchy as such:
+
+For example:
+
+📁responses
+	📁project_x
+		📁Google
+			🗄️wizard-vicuna.txt
+			. . .
+			🗄️dbrx.txt
+    📁Kubernetes
+    			🗄️wizard-vicuna.txt
+    			. . .
+    			🗄️dbrx.txt
+  📁project_y
+  . . .
+
+Where Google and Kubernetes were indicated as IaC tools for project_x, obtained in results from (STEP 1)
+	
 
 > **Note:** **This is a base version and hasn't been fully tested. Adjustments may be necessary. Thank you!**
 
