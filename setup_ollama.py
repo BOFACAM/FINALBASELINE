@@ -4,11 +4,50 @@ import subprocess
 from generate_jsonl import json_main
 import json
 from file_writer import write_files
+import io
+import sys
 
 line_gen = None
 responses = {}
-#all_llms = ["llama3","gemma","mistral","stablelm2","falcon2","dbrx"]
-all_llms = ["llama3"]
+all_llms = ["wizard-vicuna","llama3","gemma","mistral","stablelm2","falcon2","dbrx"]
+#all_llms = ["llama3"]
+
+
+
+def print_and_capture(*args, **kwargs):
+    """
+    Print to the terminal and capture the output in a variable.
+    :param args: Positional arguments to be printed.
+    :param kwargs: Keyword arguments to be passed to the print function.
+    :return: The captured output as a string.
+    """
+    # Create a string buffer to capture the print output
+    buffer = io.StringIO()
+
+    # Save the current sys.stdout
+    original_stdout = sys.stdout
+
+    try:
+        # Redirect stdout to the buffer
+        sys.stdout = buffer
+
+        # Print the message to the buffer
+        print(*args, **kwargs)
+
+        # Restore stdout to its original state
+        sys.stdout = original_stdout
+
+        # Get the captured output
+        captured_output = buffer.getvalue()
+
+        # Also print to the terminal
+        print(captured_output, end='')
+
+        return captured_output.strip()
+    finally:
+        # Make sure to restore the original stdout in case of an error
+        sys.stdout = original_stdout
+        buffer.close()
 
 
 def delete_file(file_path):
@@ -67,7 +106,7 @@ def run_model_generic(model_name, prompt):
 def run_model(model_name, prompt):
     return run_model_generic(model_name, prompt)
 
-def chat_with_model(api_payload):
+def chat_with_model(api_payload,id,iac):
     """
     Interactive chat with the selected model.
     :param api_payload: The JSON payload to send to the model, including model name, system message, and user message.
@@ -101,7 +140,7 @@ def chat_with_model(api_payload):
                 message = response_dict.get('message', {})
                 content_message = message.get('content', '')
                 print(content_message, end='', flush=True)
-                chat_history.append(content_message.strip())
+                chat_history.append(content_message)
         except json.JSONDecodeError as e:
             print(f"Error decoding JSON: {e}")
 
@@ -145,22 +184,42 @@ def chat_with_model(api_payload):
                     content_message = message.get('content', '')
                     print(content_message, end='', flush=True)
                     chat_history.append(content_message)
+                    
             except json.JSONDecodeError as e:
                 print(f"Error decoding JSON: {e}")
 
     # Optionally, save chat history
-    save_chat_history(chat_history, f"{model_name}_chat_history.txt")
+    save_chat_history(chat_history, f"{model_name}_chat_history.txt",id,iac)
 
-def save_chat_history(chat_history, file_path):
+def save_chat_history(chat_history, file_path, id, iac):
     """
     Save the chat history to a file.
     :param chat_history: The chat history to save.
     :param file_path: The file path to save the chat history to.
+    :param id: The unique identifier for the conversation or session.
     """
+    # Construct the full path for the new directory and file
+    new_path = os.path.join("responses", id, iac)
+    full_file_path = os.path.join(new_path, file_path)
+
     try:
-        with open(file_path, 'w') as file:
-            json.dump(chat_history, file, indent=2)
-        print(f"Chat history saved to {file_path}")
+        # Check if the directory already exists
+        if not os.path.exists(new_path):
+            # Create the directory if it doesn't exist
+            os.makedirs(new_path, exist_ok=True)
+            print(f"Directory created: {new_path}")
+        else:
+            print(f"Directory already exists: {new_path}")
+
+        # Write the chat history to the file
+        with open(full_file_path, 'w') as file:
+            for item in chat_history:
+                if item == " ":
+                    file.write("\n")  # Write a new line for a space
+                else:
+                    file.write(item)  # Write the item as it is
+
+        print(f"Chat history saved to {full_file_path}")
     except Exception as e:
         print(f"An error occurred while saving chat history: {e}")
 
@@ -199,50 +258,39 @@ def main():
     init_generator(file_path)
     next_line = get_next_jsonl_line()
     #3. use line
-    #while next_line is not None:
-        #store system and user prompts and id
-    system = next_line.get("system")
-    sys_message = system['message']
-    print(sys_message)
-    print('\n')
-    user = next_line.get("user")
-    user_message = user['message']
-    print(user_message)
-    print('\n')
-    id = next_line.get("repo")
-    id_responses_label = "repo_" + id
-    iac_label = next_line.get("iac_tool")
+    while next_line is not None:
+            #store system and user prompts and id
+        system = next_line.get("system")
+        sys_message = system['message']
+        print(sys_message)
+        print('\n')
+        user = next_line.get("user")
+        user_message = user['message']
+        print(user_message)
+        print('\n')
+        id = next_line.get("repo")
+        id_responses_label = "repo_" + id
+        iac_label = next_line.get("iac_tool")
 
-    api_payload = {
-        "model": "",  # Assuming you're using the llama3.1 model
-        "messages": [
-            { "role": "system", "content": sys_message},
-            { "role": "user", "content": user_message }
-        ]
-    }    
-    print(api_payload)
-    #pass in prompt for specific iac in repo for each llm
-    for llm in all_llms:
-        api_payload["model"]=llm
+        api_payload = {
+            "model": "",  # Assuming you're using the llama3.1 model
+            "messages": [
+                { "role": "system", "content": sys_message},
+                { "role": "user", "content": user_message }
+            ]
+        }    
         print(api_payload)
-        chat_with_model(api_payload)
-        """"
-        delete_file('response.txt')
-        with open('response.txt', 'w') as file:
-            file.write(response)
-        write_files('response.txt',id_responses_label,iac_label,llm)"""
-            
-"""
-    # Example usage:
-    prompt = "Tell me a joke."
-    model_name = 'falcon2'  
-    #response = run_model(model_name, prompt)
-    
-    while response is None or " ":
-        print("hello")
-        response = run_model(model_name, prompt)
-    
-    #print("Response:", response)
-"""
+        #pass in prompt for specific iac in repo for each llm
+        for llm in all_llms:
+            api_payload["model"]=llm
+            print(api_payload)
+            chat_with_model(api_payload,id_responses_label,iac_label)
+            """"
+            delete_file('response.txt')
+            with open('response.txt', 'w') as file:
+                file.write(response)
+            write_files('response.txt',id_responses_label,iac_label,llm)"""
+        next_line = get_next_jsonl_line()
+
 
 main()
