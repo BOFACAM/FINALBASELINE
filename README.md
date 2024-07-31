@@ -461,16 +461,26 @@ This file populates a directory hierarchy as such:
 For example:
 
 📁responses
-	📁project_x
-		📁Google
-			🗄️wizard-vicuna.txt
-			. . .
-			🗄️dbrx.txt
-    📁Kubernetes
-    			🗄️wizard-vicuna.txt
-    			. . .
-    			🗄️dbrx.txt
-  📁project_y
+	
+ 	📁project_x
+		
+  		📁Google
+			
+   			🗄️wizard-vicuna.txt
+			
+   			. . .
+			
+   			🗄️dbrx.txt
+    		
+      		📁Kubernetes
+    			
+       			🗄️wizard-vicuna.txt
+    			
+       			. . .
+    			
+       			🗄️dbrx.txt
+  
+  	📁project_y
   . . .
 
 Where Google and Kubernetes were indicated as IaC tools for project_x, obtained in results from (STEP 1)
