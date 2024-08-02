@@ -226,7 +226,7 @@ If the IAC parser uses a list of files as a parameter, the method will populate 
 """
 def validate_repo(row):
     target_dir, relevant_files, tools_found,repo_url, repo_id = process_single_row(row)
-    validated_files = []
+    validated_files = {}
 
     iac_dict = {
         "VAG": 0,
@@ -248,7 +248,7 @@ def validate_repo(row):
     present,path = vagrant_validation(target_dir)
     if present:
         iac_dict["VAG"] = 1
-        validated_files.append(path)
+        validated_files["VAG"] = [path]
     
     tf_files = [f for f in relevant_files if f.endswith(('.tf', '.tf.json'))]
     aws_files = [f for f in relevant_files if f.endswith(('.yaml', '.yml', '.json'))]
@@ -256,9 +256,10 @@ def validate_repo(row):
     pup_files = [f for f in relevant_files if f.endswith('.pp')]
     
     if 'ANS' in tools_found:
-        ansible = ansible_main(target_dir, repo_id)
+        ansible, ansible_paths = ansible_main(target_dir, repo_id)
         if ansible == 1:
             iac_dict["ANS"] = ansible
+            validated_files["ANS"] = ansible_paths
 
     if 'AZ' in tools_found:
         #appear, files = AZ_validation(az_files)
@@ -268,50 +269,51 @@ def validate_repo(row):
         # appear, files = AZ_validation_mac(az_files)
         if appear:
             iac_dict["AZ"] = 1
-            validated_files.extend(files)
+            validated_files["AZ"] = files
     
     if 'AWS' in tools_found:
         appear, files = AWS_validation(aws_files)
         if appear:
             iac_dict["AWS"] = 1
-            validated_files.extend(files)
+            validated_files["AWS"] = files
 
     if 'PUP' in tools_found:
         appear, files = PP_validation(pup_files)
         if appear:
             iac_dict["PUP"] = 1
-            validated_files.extend(files)
+            validated_files = files
 
     if 'TF' in tools_found: #good
         appear, files = init_validate_terraform_files(tf_files)
         if appear:
             iac_dict["TF"] = 1
-            validated_files.extend(files)
+            validated_files["TF"] = files
     # end of my code
 
     if 'SS' in tools_found: #good
         salt_result = salt_main(target_dir)
         if salt_result:
             iac_dict["SS"] = 1
-            validated_files.extend(found_files)
-            validated_files.extend(found_dirs)
+            validated_files["SS"] = found_files
+            validated_files["SS_dirs"] = found_dirs
 
     if 'PUL' in tools_found: #good
         pulumi_result = pulumi_main(target_dir)
         if pulumi_result:
             iac_dict["PUL"] = 1
-            validated_files.extend(find_pulumi_files(target_dir))
+            validated_files["PUL"] = find_pulumi_files(target_dir)
     
     if 'BIC' in tools_found:#good
-        bicep_result,file_path = bicep_main(target_dir)
+        bicep_result, file_path = bicep_main(target_dir)
         if bicep_result:
             iac_dict['BIC'] = 1
-            validated_files.append(file_path)
+            validated_files["BIC"] = [file_path]
     
     if 'DOCC' in tools_found: #good
-        docker_result = docker_main(target_dir)
+        docker_result, file_paths = docker_main(target_dir)
         #docker_result will store a 0/1
-        iac_dict["DOCK"]= docker_result
+        validated_files["DOCK"] = file_paths
+        iac_dict["DOCK"] = docker_result
         #validated_files.extend(docker_files)
     if 'CH' in tools_found:#good
         chef_result = chef_main(target_dir)
@@ -319,8 +321,8 @@ def validate_repo(row):
         
     if 'GOOG' or 'KUB' in tools_found:
         kubernetes, google = kub_google_main(target_dir)
-        iac_dict["GOOG"]=google
-        iac_dict["KUB"]=kubernetes
+        iac_dict["GOOG"] = google
+        iac_dict["KUB"] = kubernetes
     
     shutil.rmtree(target_dir, onerror=onerror)
     return iac_dict, validated_files, repo_url
@@ -581,7 +583,7 @@ def main():
     print(analyzer_path)
     print ("\nSTOP\n")
     csv_file = "first_screening.csv"
-    output_csv = "check_output.csv"
+    output_csv = "check_output_draft.csv"
 
     df = read_csv(csv_file)
 
@@ -601,7 +603,7 @@ def main():
         # repo_url = row['URL']
         iac_dict,validated_files, repo_url = validate_repo(row)
         with open(output_csv, 'a', newline='') as f:
-            validated_files_join = ';'.join(validated_files)
+            # validated_files_join = ';'.join(validated_files)
             writer = csv.writer(f)
             data_row = [repo_id,
                         repo_url, 
@@ -618,7 +620,7 @@ def main():
                         iac_dict["GOOG"],
                         iac_dict["KUB"],
                         iac_dict["ANS"],
-                        validated_files_join
+                        validated_files
                     ]
             writer.writerow(data_row)
 

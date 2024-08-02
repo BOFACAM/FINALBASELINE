@@ -20,3 +20,6 @@ new_output.csv
 template-analyzer/
 FINAL_CSV_1.csv
 log_error.txt
+
+ansible-outputs-draft/
+draft_folder/
