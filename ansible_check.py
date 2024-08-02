@@ -61,7 +61,7 @@ def ansible_main(repo_dir, repo_id):
             if file_label == "playbook":
                 playbook_file_paths.append(json_line["filepath"])
 
-    # shutil.rmtree(os.path.join(ansible_out_path, repo_id))  # We remove the existing repository analysis from the machine as it clones the project back, thus taking lots of space.
+    shutil.rmtree(os.path.join(ansible_out_path, repo_id))  # We remove the existing repository analysis from the machine as it clones the project back, thus taking lots of space.
     if flag_report and flag_metadata and flag_playbook:  # We found a software project which gets properly parsed through the ansible-content-parser
         print(f"> Ansible parsing output FOUND for repo {repo_id}")
         return 1, playbook_file_paths

@@ -19,9 +19,9 @@ failed_repo = 'failed_docker.txt'
 output_results = 'docker_results.csv'
 # success_flags = []
 
-result = []
-success_flags = []
-working_dockerfiles = []
+#result = []
+#success_flags = []
+#working_dockerfiles = []
 
 
 """
@@ -75,7 +75,7 @@ Checking the validity of each file in the working_dockerfiles list.
 @returns (int) : flag denoting if there were any valid docker files in the repository.
 
 """
-def check_docker_compose_files():
+def check_docker_compose_files(working_dockerfiles):
 
     success_flags = []
 
@@ -105,7 +105,7 @@ Searches the given directory and its subdirectories for a file named 'docker-com
 
 @param bool: True if 'docker-compose.yml' is found, False otherwise.
 """
-def find_docker_compose(root_dir):
+def find_docker_compose(root_dir, working_dockerfiles):
 
     for subdir, _, files in os.walk(root_dir):
         # print(subdir, _, files)
@@ -116,7 +116,7 @@ def find_docker_compose(root_dir):
                 working_dockerfiles.append(full_path)
     # print(working_dockerfiles)
     if working_dockerfiles:
-        final_eval = check_docker_compose_files()
+        final_eval = check_docker_compose_files(working_dockerfiles)
         return final_eval, working_dockerfiles
     else:
         return 0, []
@@ -143,9 +143,10 @@ Finds the result of the docker parsing mechanism
 """
 def docker_main(repo_dir):
 
-    result, docker_paths = find_docker_compose(repo_dir)
+    working_dockerfiles = []
+    result, docker_paths = find_docker_compose(repo_dir, working_dockerfiles)
     # print(result)
     # print(working_dockerfiles)
-    success_flags = []
-    working_dockerfiles = []
+    #success_flags = []
+    #b working_dockerfiles = []
     return result, docker_paths
