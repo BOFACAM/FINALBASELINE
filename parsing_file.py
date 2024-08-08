@@ -144,7 +144,10 @@ Check if the file contains meaningful content (not empty, not just comments, or 
 @returns : a boolean flag denoting if the file is meaningful
 """
 def is_meaningful_file(file_path):
-   
+
+    if not os.path.exists(file_path):  # In case the initially collected files have been deleted or modified.
+        return False
+
     if os.path.getsize(file_path) == 0:
         return False
     try:
@@ -581,10 +584,9 @@ A column at the end stores the files validated by the parsers.
 def main():
     analyzer_path = find_analyzer_cli_path()
     print(analyzer_path)
-    print ("\nSTOP\n")
+    print("\nSTOP\n")
     csv_file = "first_screening.csv"
-    output_csv = "check_output_draft.csv"
-
+    output_csv = "FINAL_CSV_1.csv"
     df = read_csv(csv_file)
 
     if os.path.exists(output_csv):
