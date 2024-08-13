@@ -60,7 +60,7 @@ on windows_386
 
 **LINUX INSTALL**
 
-Interface as well as CLI installation ways offered, more info in the provided link.
+Interface as well as CLI installation ways offered for different distributions (e.g. Ubuntu, Red Hat, ...), more info in the provided link.
 
 **MAC OS INSTALL**
 
@@ -84,14 +84,14 @@ Interface as well as CLI installation ways offered, more info in the provided li
 Make sure you are doing this through the directory that you are working in or doing it through your default directory/root directory.
 LINK- https://github.com/aws-cloudformation/cfn-lint
 
-**MAC OS INSTALL**
+**MAC OS/LINUX/WINDOWS INSTALL**
 
 - Ensure Python3 is installed
   ```
   % python3 --version
   Python 3.12.3
   ```
-- Ensure pip is installed
+- Ensure pip is installed (We provide example for installing pip in Mac)
   ```
   %brew install pip
   %pip3 --version
@@ -161,6 +161,16 @@ My output for this was:
 0.7.0+582d9199d19acc60716af8f0874dc51cec6aa01b
 ```
 
+**LINUX (RHEL) INSTALL (other distributions exist too)**
+
+- Go to: [LINK](https://learn.microsoft.com/en-us/dotnet/core/install/linux-rhel)
+- You will find a list of distribution versions, choose the option according to the characteristics of your machine.
+- Run in the terminal:
+```
+sudo dnf install dotnet-sdk-8.0
+```
+- Build the template analyzer following the instructions given in the Mac installation guide.
+
 ### Chef
 
 **UPDATED: MUST USE COOKSTYLE INSTEAD OF FOODCRITIC**
@@ -198,6 +208,14 @@ My output for this was:
           * RuboCop 1.25.1
       ```
 
+**LINUX (RHEL distribution)**
+
+- For RUBY installation go to: [LINK](https://www.ruby-lang.org/en/documentation/installation/#yum) all the CLI installation instructions are given for multiple OS and distributions.
+- For our machine worked as follows:
+```sudo yum install ruby```
+
+- For Cookstyle: **Same instructions as with Mac**
+
 ### Puppet
 Make sure you are on your root directory. This should be set as default but the command should be done in the user that you are working in.
 
@@ -225,6 +243,18 @@ Go to your "Edit system environment variables", go to "Environment Variables" --
   %puppet --version
   7.31.0
   ```
+**RHEL INSTALL (Linux)**
+- For version 7 run 
+```
+sudo rpm -Uvh https://yum.puppet.com/puppet5-release-el-7.noarch.rpm
+```
+- Then
+```
+sudo yum install puppet-agent --skip-broken --nobest
+```
+
+- For more info check [LINK](https://www.puppet.com/docs/puppet/5.5/puppet_platform)
+
 ### Salt Lint
 
 **WINDOWS INSTALL**
@@ -233,7 +263,7 @@ Install using pip:
 ```
 pip install salt-lint
 ```
-**MAC INSTALL**
+**MAC/LINUX INSTALL**
 
 - Install using pip
   ```
@@ -274,6 +304,18 @@ LINK: https://www.pulumi.com/docs/install/
   v3.124.0
   ```
 
+**LINUX INSTALL**
+
+- Run in CLI:
+  ```
+  curl -fsSL https://get.pulumi.com | sh
+  ```
+- Restart the kernel (open a new terminal)
+- Verify installation:
+  ```
+  pulumi version
+  ```
+- More info for Linux installation at [LINK](https://www.pulumi.com/docs/install/)
 
 ***You will need a Pulumi Access Token.** 
 
